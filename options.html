@@ -38,6 +38,31 @@
       </section>
 
       <section class="section">
+        <h2>데이터 관리</h2>
+        <div class="data-management">
+          <div class="management-group">
+            <h3>백업 및 복원</h3>
+            <div class="management-actions">
+              <button type="button" id="export-btn" class="btn btn-secondary">
+                <span class="btn-icon">📥</span>
+                설정 내보내기 (JSON)
+              </button>
+              <div class="import-section">
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+                <button type="button" id="import-btn" class="btn btn-secondary">
+                  <span class="btn-icon">📤</span>
+                  설정 가져오기 (JSON)
+                </button>
+              </div>
+            </div>
+            <p class="management-description">
+              검색엔진 설정을 JSON 파일로 백업하거나 복원할 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
         <h2>등록된 검색엔진</h2>
         <div id="engines-list" class="engines-list">
           <!-- 동적으로 생성될 검색엔진 목록 -->

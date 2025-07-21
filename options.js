@@ -13,6 +13,11 @@ const elements = {
   saveBtn: document.getElementById('save-btn'),
   statusMessage: document.getElementById('status-message'),
   
+  // 데이터 관리 요소들
+  exportBtn: document.getElementById('export-btn'),
+  importBtn: document.getElementById('import-btn'),
+  importFile: document.getElementById('import-file'),
+  
   // 모달 요소들
   confirmModal: document.getElementById('confirm-modal'),
   confirmMessage: document.getElementById('confirm-message'),
@@ -70,6 +75,11 @@ function initEventListeners() {
   elements.addEngineBtn.addEventListener('click', handleAddEngine);
   elements.resetBtn.addEventListener('click', handleReset);
   elements.saveBtn.addEventListener('click', handleSave);
+  
+  // 데이터 관리 이벤트
+  elements.exportBtn.addEventListener('click', handleExport);
+  elements.importBtn.addEventListener('click', () => elements.importFile.click());
+  elements.importFile.addEventListener('change', handleImport);
   
   // 모달 이벤트
   elements.confirmCancel.addEventListener('click', hideConfirmModal);
@@ -414,6 +424,108 @@ function handleConfirmOk() {
   } else {
     console.log('실행할 액션이 없습니다.');
   }
+}
+
+// 검색엔진 설정 내보내기
+function handleExport() {
+  try {
+    // 순수한 검색엔진 배열만 내보내기
+    const jsonString = JSON.stringify(searchEngines, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-');
+    const filename = `drag-search-engines_${timestamp}.json`;
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showStatus(`설정이 ${filename} 파일로 내보내졌습니다.`, 'success');
+  } catch (error) {
+    console.error('내보내기 실패:', error);
+    showStatus('설정 내보내기에 실패했습니다.', 'error');
+  }
+}
+
+// 검색엔진 설정 가져오기
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+    showStatus('JSON 파일만 가져올 수 있습니다.', 'error');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      const importData = JSON.parse(e.target.result);
+      
+      // 데이터 유효성 검사 - 배열인지 확인
+      if (!Array.isArray(importData)) {
+        showStatus('유효하지 않은 설정 파일입니다. 검색엔진 배열이어야 합니다.', 'error');
+        return;
+      }
+      
+      // 검색엔진 데이터 유효성 검사
+      const validEngines = importData.filter(engine => {
+        return engine && engine.id && engine.name && engine.url && engine.url.includes('%s');
+      });
+      
+      if (validEngines.length === 0) {
+        showStatus('가져올 수 있는 유효한 검색엔진이 없습니다.', 'error');
+        return;
+      }
+      
+      // Google 검색엔진이 없으면 추가
+      const hasGoogle = validEngines.some(engine => engine.id === 'google');
+      if (!hasGoogle) {
+        validEngines.unshift({
+          id: 'google',
+          name: 'Google',
+          url: 'https://www.google.com/search?q=%s',
+          icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE2djQuMjVoNi4xOUMyMi4wNSAxNi4xMiAyMS4xNSAxNyAyMCAxN0MxOC44NSAxNyAxNy45NSAxNi4xMiAxNy44MSAxNUgxNnY0aDEwLjU2QzIyLjU2IDEzIDIyLjU2IDEyLjUgMjIuNTYgMTIuMjVaIiBmaWxsPSIjNEY4NUY0Ii8+CjxwYXRoIGQ9Ik0yMiA3SDEwVjEzSDIyVjdaIiBmaWxsPSIjRUE0MzM1Ii8+CjxwYXRoIGQ9Ik0yIDdIMTBWMTNIMlY3WiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTAgMkg2VjEwSDEwVjJaIiBmaWxsPSIjMzRBODUzIi8+Cjwvc3ZnPgo=',
+          isDefault: true
+        });
+      }
+      
+      // 확인 모달 표시
+      elements.confirmMessage.innerHTML = `
+        <strong>${validEngines.length}개의 검색엔진</strong>을 가져오시겠습니까?<br>
+        <small style="color: #6b7280;">현재 설정이 대체됩니다.</small>
+      `;
+      
+      currentConfirmAction = async () => {
+        try {
+          searchEngines = validEngines;
+          await chrome.storage.sync.set({ searchEngines: searchEngines });
+          renderEnginesList();
+          hideConfirmModal();
+          showStatus(`${validEngines.length}개의 검색엔진을 성공적으로 가져왔습니다.`, 'success');
+        } catch (error) {
+          console.error('가져오기 저장 실패:', error);
+          showStatus('설정 가져오기에 실패했습니다.', 'error');
+        }
+      };
+      
+      showConfirmModal();
+      
+    } catch (error) {
+      console.error('파일 읽기 실패:', error);
+      showStatus('파일을 읽을 수 없습니다. 올바른 JSON 파일인지 확인해주세요.', 'error');
+    }
+  };
+  
+  reader.readAsText(file);
+  // 파일 입력 초기화 (같은 파일 다시 선택 가능하도록)
+  event.target.value = '';
 }
 
 // 더 이상 전역 함수 노출이 필요하지 않음 (이벤트 위임 사용) 

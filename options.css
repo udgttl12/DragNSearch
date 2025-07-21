@@ -160,6 +160,39 @@ body {
   font-size: 1.1rem;
 }
 
+/* 데이터 관리 */
+.data-management {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.management-group h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.management-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.import-section {
+  position: relative;
+}
+
+.management-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* 검색엔진 목록 */
 .engines-list {
   display: grid;
@@ -405,5 +438,18 @@ body {
   .modal-content {
     background: #1f2937;
     color: #f9fafb;
+  }
+  
+  .data-management {
+    background: #111827;
+    border-color: #374151;
+  }
+  
+  .management-group h3 {
+    color: #f9fafb;
+  }
+  
+  .management-description {
+    color: #9ca3af;
   }
 } 

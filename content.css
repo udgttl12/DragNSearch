@@ -1,0 +1,172 @@
+/* 팝업 컨테이너 */
+.drag-search-popup {
+  position: fixed;
+  z-index: 2147483647; /* 최상위 레이어 */
+  display: none;
+  flex-direction: row;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.2s ease-out;
+  pointer-events: all;
+  user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 팝업 등장 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 검색엔진 아이콘 */
+.search-engine-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-engine-icon:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.search-engine-icon:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 드래그 호버 상태 */
+.search-engine-icon.drag-hover {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.2);
+}
+
+/* 아이콘 이미지 */
+.search-engine-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* 툴팁 스타일 개선 */
+.search-engine-icon::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+.search-engine-icon:hover::after {
+  opacity: 1;
+}
+
+/* 다크 모드 대응 */
+@media (prefers-color-scheme: dark) {
+  .drag-search-popup {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .search-engine-icon {
+    background: rgba(55, 65, 81, 0.8);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .search-engine-icon:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+  }
+  
+  .search-engine-icon.drag-hover {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: rgba(34, 197, 94, 0.4);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .drag-search-popup {
+    gap: 6px;
+    padding: 6px;
+  }
+  
+  .search-engine-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .search-engine-icon img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* 고대비 모드 대응 */
+@media (prefers-contrast: high) {
+  .drag-search-popup {
+    background: white;
+    border: 2px solid black;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  .search-engine-icon {
+    background: white;
+    border: 1px solid black;
+  }
+  
+  .search-engine-icon:hover {
+    background: #e5e7eb;
+  }
+}
+
+/* 애니메이션 감소 모드 대응 */
+@media (prefers-reduced-motion: reduce) {
+  .drag-search-popup {
+    animation: none;
+  }
+  
+  .search-engine-icon {
+    transition: none;
+  }
+  
+  .search-engine-icon:hover {
+    transform: none;
+  }
+} 

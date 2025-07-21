@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag & Drop Search - 설정</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>🔍 Drag & Drop Search</h1>
+      <p class="subtitle">검색엔진 관리 및 설정</p>
+    </header>
+
+    <main class="main-content">
+      <section class="section">
+        <h2>검색엔진 관리</h2>
+        <div class="add-engine-form">
+          <div class="form-group">
+            <label for="engine-name">검색엔진 이름</label>
+            <input type="text" id="engine-name" placeholder="예: Google, Naver">
+          </div>
+          <div class="form-group">
+            <label for="engine-url">검색 URL</label>
+            <input type="url" id="engine-url" placeholder="https://www.google.com/search?q=%s">
+            <small>%s는 검색어로 대체됩니다</small>
+          </div>
+          <div class="form-group">
+            <label for="engine-icon">아이콘 URL (선택사항)</label>
+            <input type="url" id="engine-icon" placeholder="https://example.com/icon.png">
+          </div>
+          <button type="button" id="add-engine-btn" class="btn btn-primary">
+            <span class="btn-icon">➕</span>
+            검색엔진 추가
+          </button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>등록된 검색엔진</h2>
+        <div id="engines-list" class="engines-list">
+          <!-- 동적으로 생성될 검색엔진 목록 -->
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="status-message" id="status-message"></div>
+      <div class="footer-actions">
+        <button type="button" id="reset-btn" class="btn btn-secondary">
+          <span class="btn-icon">🔄</span>
+          기본값으로 초기화
+        </button>
+        <button type="button" id="save-btn" class="btn btn-success">
+          <span class="btn-icon">💾</span>
+          저장
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 확인 모달 -->
+  <div id="confirm-modal" class="modal">
+    <div class="modal-content">
+      <h3>확인</h3>
+      <p id="confirm-message"></p>
+      <div class="modal-actions">
+        <button type="button" id="confirm-cancel" class="btn btn-secondary">취소</button>
+        <button type="button" id="confirm-ok" class="btn btn-danger">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 검색엔진 편집 모달 -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <h3>검색엔진 편집</h3>
+      <div class="form-group">
+        <label for="edit-engine-name">검색엔진 이름</label>
+        <input type="text" id="edit-engine-name">
+      </div>
+      <div class="form-group">
+        <label for="edit-engine-url">검색 URL</label>
+        <input type="url" id="edit-engine-url">
+        <small>%s는 검색어로 대체됩니다</small>
+      </div>
+      <div class="form-group">
+        <label for="edit-engine-icon">아이콘 URL</label>
+        <input type="url" id="edit-engine-icon">
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="edit-cancel" class="btn btn-secondary">취소</button>
+        <button type="button" id="edit-save" class="btn btn-primary">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html> 

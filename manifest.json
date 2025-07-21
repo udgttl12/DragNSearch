@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "Drag & Drop Search",
+  "version": "1.0.0",
+  "description": "텍스트를 드래그하여 다양한 검색엔진에서 즉시 검색할 수 있는 확장 기능",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "options_page": "options.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Drag & Drop Search"
+  },
+  "icons": {
+    "16": "icons/icon.svg",
+    "32": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "128": "icons/icon.svg"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*", "*.svg", "*.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+} 

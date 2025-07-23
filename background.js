@@ -79,7 +79,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     
     if (engine && info.selectionText) {
       const searchUrl = engine.url.replace('%s', encodeURIComponent(info.selectionText));
-      chrome.tabs.create({ url: searchUrl });
+      // activeTab 권한을 사용하여 새 탭 생성
+      chrome.tabs.create({ url: searchUrl, active: true });
     }
   }
 });
@@ -99,7 +100,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const engine = searchEngines.find(e => e.id === engineId);
       if (engine) {
         const searchUrl = engine.url.replace('%s', encodeURIComponent(searchText));
-        chrome.tabs.create({ url: searchUrl });
+        // activeTab 권한을 사용하여 새 탭 생성
+        chrome.tabs.create({ url: searchUrl, active: true });
       }
     });
   }

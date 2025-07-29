@@ -3,6 +3,7 @@ let searchEngines = [];
 let popupElement = null;
 let selectedText = '';
 let mousePosition = { x: 0, y: 0 };
+let isSearching = false; // 검색 중복 실행 방지 플래그
 
 // 검색엔진 데이터 로드
 async function loadSearchEngines() {
@@ -16,7 +17,7 @@ async function loadSearchEngines() {
           id: 'google',
           name: 'Google',
           url: 'https://www.google.com/search?q=%s',
-          icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE2djQuMjVoNi4xOUMyMi4wNSAxNi4xMiAyMS4xNSAxNyAyMCAxN0MxOC44NSAxNyAxNy45NSAxNi4xMiAxNy44MSAxNUgxNnY0aDEwLjU2QzIyLjU2IDEzIDIyLjU2IDEyLjUgMjIuNTYgMTIuMjVaIiBmaWxsPSIjNEY4NUY0Ii8+CjxwYXRoIGQ9Ik0yMiA3SDEwVjEzSDIyVjdaIiBmaWxsPSIjRUE0MzM1Ii8+CjxwYXRoIGQ9Ik0yIDdIMTBWMTNIMlY3WiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTAgMkg2VjEwSDEwVjJaIiBmaWxsPSIjMzRBODUzIi8+Cjwvc3ZnPgo=',
+          icon: 'http://www.google.com/s2/favicons?domain=https://www.google.com',
           isDefault: true
         }
       ];
@@ -34,7 +35,7 @@ async function loadSearchEngines() {
               id: 'google',
               name: 'Google',
               url: 'https://www.google.com/search?q=%s',
-              icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE2djQuMjVoNi4xOUMyMi4wNSAxNi4xMiAyMS4xNSAxNyAyMCAxN0MxOC44NSAxNyAxNy45NSAxNi4xMiAxNy44MSAxNUgxNnY0aDEwLjU2QzIyLjU2IDEzIDIyLjU2IDEyLjUgMjIuNTYgMTIuMjVaIiBmaWxsPSIjNEY4NUY0Ii8+CjxwYXRoIGQ9Ik0yMiA3SDEwVjEzSDIyVjdaIiBmaWxsPSIjRUE0MzM1Ii8+CjxwYXRoIGQ9Ik0yIDdIMTBWMTNIMlY3WiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTAgMkg2VjEwSDEwVjJaIiBmaWxsPSIjMzRBODUzIi8+Cjwvc3ZnPgo=',
+              icon: 'http://www.google.com/s2/favicons?domain=https://www.google.com',
               isDefault: true
             }
           ];
@@ -43,6 +44,7 @@ async function loadSearchEngines() {
         }
         if (response && response.engines) {
           searchEngines = response.engines;
+          console.log('검색엔진 로드 완료:', searchEngines);
         } else {
           // 응답이 없을 경우 기본 검색엔진 사용
           searchEngines = [
@@ -65,7 +67,7 @@ async function loadSearchEngines() {
           id: 'google',
           name: 'Google',
           url: 'https://www.google.com/search?q=%s',
-          icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE2djQuMjVoNi4xOUMyMi4wNSAxNi4xMiAyMS4xNSAxNyAyMCAxN0MxOC44NSAxNyAxNy45NSAxNi4xMiAxNy44MSAxNUgxNnY0aDEwLjU2QzIyLjU2IDEzIDIyLjU2IDEyLjUgMjIuNTYgMTIuMjVaIiBmaWxsPSIjNEY4NUY0Ii8+CjxwYXRoIGQ9Ik0yMiA3SDEwVjEzSDIyVjdaIiBmaWxsPSIjRUE0MzM1Ii8+CjxwYXRoIGQ9Ik0yIDdIMTBWMTNIMlY3WiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTAgMkg2VjEwSDEwVjJaIiBmaWxsPSIjMzRBODUzIi8+Cjwvc3ZnPgo=',
+          icon: 'http://www.google.com/s2/favicons?domain=https://www.google.com',
           isDefault: true
         }
       ];
@@ -167,10 +169,21 @@ function hidePopup() {
 
 // 검색 실행
 function performSearch(engineId, text) {
+  console.log('검색 실행:', engineId, text);
+  
+  // 중복 실행 방지
+  if (isSearching) {
+    console.log('이미 검색 중입니다. 중복 실행 방지');
+    return;
+  }
+  
+  isSearching = true;
+  
   // Chrome extension context 유효성 검사
   if (!chrome || !chrome.runtime || !chrome.runtime.sendMessage) {
     console.log('Chrome extension context가 유효하지 않음');
     handleExtensionDisconnected(engineId, text);
+    isSearching = false;
     return;
   }
 
@@ -180,57 +193,107 @@ function performSearch(engineId, text) {
     if (!extensionId) {
       console.log('Extension ID를 가져올 수 없음 - context 무효');
       handleExtensionDisconnected(engineId, text);
+      isSearching = false;
       return;
     }
   } catch (error) {
     console.log('Extension context 검사 실패:', error.message);
     handleExtensionDisconnected(engineId, text);
+    isSearching = false;
     return;
   }
 
-  try {
-    chrome.runtime.sendMessage({
-      action: 'search',
-      engineId: engineId,
-      searchText: text
-    }, (response) => {
-      // sendMessage 호출 후에도 runtime 에러 체크
-      if (chrome.runtime.lastError) {
-        console.error('검색 실행 실패:', chrome.runtime.lastError.message);
-        handleExtensionDisconnected(engineId, text);
+  // Promise 기반 메시지 전송 (타임아웃 포함)
+  const sendMessagePromise = () => {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('메시지 전송 타임아웃'));
+      }, 3000); // 3초 타임아웃으로 단축
+
+      try {
+        chrome.runtime.sendMessage({
+          action: 'search',
+          engineId: engineId,
+          searchText: text
+        }, (response) => {
+          clearTimeout(timeout);
+          if (chrome.runtime.lastError) {
+            console.error('검색 실행 실패:', chrome.runtime.lastError.message);
+            reject(chrome.runtime.lastError);
+          } else if (response && response.success) {
+            console.log('검색 성공:', response);
+            resolve(response);
+          } else if (response && !response.success) {
+            console.error('검색 실패:', response.error);
+            reject(new Error(response.error));
+          } else {
+            resolve(response);
+          }
+        });
+      } catch (error) {
+        clearTimeout(timeout);
+        console.error('메시지 전송 중 오류:', error);
+        reject(error);
       }
     });
-  } catch (error) {
-    console.error('검색 실행 중 오류:', error.message);
-    handleExtensionDisconnected(engineId, text);
-  }
+  };
+
+  // 메시지 전송 시도 - 성공 시에만 처리, 실패 시에만 대안 실행
+  sendMessagePromise()
+    .then((response) => {
+      console.log('검색 완료:', response);
+      // 성공 시에는 아무것도 하지 않음 (background script에서 새 탭 생성)
+      isSearching = false;
+    })
+    .catch((error) => {
+      console.error('검색 실패, 대안 실행:', error);
+      // 실패 시에만 대안 실행
+      handleExtensionDisconnected(engineId, text);
+      isSearching = false;
+    });
 }
 
 // 확장 기능 연결 끊어졌을 때 처리
 function handleExtensionDisconnected(engineId, text) {
   console.log('확장 기능 연결 끊어짐, 대안 검색 실행');
   
-  // 로컬 저장된 검색엔진 정보로 직접 검색
-  const fallbackEngines = {
-    'google': 'https://www.google.com/search?q=%s',
-    'naver': 'https://search.naver.com/search.naver?query=%s',
-    'youtube': 'https://www.youtube.com/results?search_query=%s',
-    'wikipedia': 'https://ko.wikipedia.org/wiki/Special:Search?search=%s'
-  };
+  // 로컬에 저장된 검색엔진 목록에서 해당 엔진 찾기
+  const targetEngine = searchEngines.find(engine => engine.id === engineId);
   
-  const searchUrl = fallbackEngines[engineId];
-  if (searchUrl) {
-    const finalUrl = searchUrl.replace('%s', encodeURIComponent(text));
-    window.open(finalUrl, '_blank');
-    
-    // 사용자에게 알림
-    showExtensionUpdateNotice();
+  if (targetEngine) {
+    // 저장된 검색엔진에서 찾은 경우
+    const searchUrl = targetEngine.url.replace('%s', encodeURIComponent(text));
+    window.open(searchUrl, '_blank');
+    console.log('로컬 검색엔진으로 검색:', searchUrl);
   } else {
-    // 기본 Google 검색으로 폴백
-    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
-    window.open(googleUrl, '_blank');
-    showExtensionUpdateNotice();
+    // 기본 검색엔진으로 폴백
+    const fallbackEngines = {
+      'google': 'https://www.google.com/search?q=%s',
+      'naver': 'https://search.naver.com/search.naver?query=%s',
+      'youtube': 'https://www.youtube.com/results?search_query=%s',
+      'wikipedia': 'https://ko.wikipedia.org/wiki/Special:Search?search=%s'
+    };
+    
+    const searchUrl = fallbackEngines[engineId];
+    if (searchUrl) {
+      const finalUrl = searchUrl.replace('%s', encodeURIComponent(text));
+      window.open(finalUrl, '_blank');
+      console.log('기본 검색엔진으로 폴백:', finalUrl);
+    } else {
+      // 최종 폴백: Google 검색
+      const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(text)}`;
+      window.open(googleUrl, '_blank');
+      console.log('Google 검색으로 최종 폴백:', googleUrl);
+    }
   }
+  
+  // 사용자에게 알림
+  showExtensionUpdateNotice();
+  
+  // 검색 완료 후 플래그 리셋
+  setTimeout(() => {
+    isSearching = false;
+  }, 1000);
 }
 
 // 확장 기능 업데이트 알림 표시

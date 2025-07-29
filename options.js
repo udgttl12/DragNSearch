@@ -7,6 +7,8 @@ const elements = {
   engineName: document.getElementById('engine-name'),
   engineUrl: document.getElementById('engine-url'),
   engineIcon: document.getElementById('engine-icon'),
+  useExistingIcon: document.getElementById('use-existing-icon'),
+  iconUrlGroup: document.getElementById('icon-url-group'),
   addEngineBtn: document.getElementById('add-engine-btn'),
   enginesList: document.getElementById('engines-list'),
   resetBtn: document.getElementById('reset-btn'),
@@ -28,6 +30,8 @@ const elements = {
   editEngineName: document.getElementById('edit-engine-name'),
   editEngineUrl: document.getElementById('edit-engine-url'),
   editEngineIcon: document.getElementById('edit-engine-icon'),
+  editUseExistingIcon: document.getElementById('edit-use-existing-icon'),
+  editIconUrlGroup: document.getElementById('edit-icon-url-group'),
   editCancel: document.getElementById('edit-cancel'),
   editSave: document.getElementById('edit-save')
 };
@@ -38,28 +42,28 @@ const DEFAULT_SEARCH_ENGINES = [
     id: 'google',
     name: 'Google',
     url: 'https://www.google.com/search?q=%s',
-    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE2djQuMjVoNi4xOUMyMi4wNSAxNi4xMiAyMS4xNSAxNyAyMCAxN0MxOC44NSAxNyAxNy45NSAxNi4xMiAxNy44MSAxNUgxNnY0aDEwLjU2QzIyLjU2IDEzIDIyLjU2IDEyLjUgMjIuNTYgMTIuMjVaIiBmaWxsPSIjNEY4NUY0Ii8+CjxwYXRoIGQ9Ik0yMiA3SDEwVjEzSDIyVjdaIiBmaWxsPSIjRUE0MzM1Ii8+CjxwYXRoIGQ9Ik0yIDdIMTBWMTNIMlY3WiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTAgMkg2VjEwSDEwVjJaIiBmaWxsPSIjMzRBODUzIi8+Cjwvc3ZnPgo=',
+    icon: 'http://www.google.com/s2/favicons?domain=https://www.google.com',
     isDefault: true
   },
   {
     id: 'naver',
     name: 'Naver',
     url: 'https://search.naver.com/search.naver?query=%s',
-    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjMDBDNzNDIi8+CjxwYXRoIGQ9Ik0xNCAxM0g5VjE2SDE0VjEzWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTkgOEgxNFYxMUg5VjhaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
+    icon: 'http://www.google.com/s2/favicons?domain=https://www.naver.com',
     isDefault: true
   },
   {
     id: 'youtube',
     name: 'YouTube',
     url: 'https://www.youtube.com/results?search_query=%s',
-    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIzLjQ5OCA2LjE4NkMyMy4yODQgNS4zMDEgMjIuNjA3IDQuNTk3IDIxLjc1MiA0LjM3N0MyMC4yNTQgNCAyMCA0IDIwIDRzMC4yNTQgMCAxLjc1MiAwLjM3N0MyMi42MDcgNC41OTcgMjMuMjg0IDUuMzAxIDIzLjQ5OCA2LjE4NkMyNCA3LjY5IDI0IDEyIDI0IDEyUzI0IDE2LjMxIDIzLjQ5OCAxNy44MTRDMjMuMjg0IDE4LjY5OSAyMi42MDcgMTkuNDAzIDIxLjc1MiAxOS42MjNDMjAuMjU0IDIwIDIwIDIwIDIwIDIwczAuMjU0IDAgMS43NTIgLTAuMzc3QzIyLjYwNyAxOS40MDMgMjMuMjg0IDE4LjY5OSAyMy40OTggMTcuODE0QzI0IDE2LjMxIDI0IDEyIDI0IDEyUzI0IDcuNjkgMjMuNDk4IDYuMTg2WiIgZmlsbD0iI0ZGMDAwMCIvPgo8cGF0aCBkPSJNOS41NSA4LjVWMTUuNUwxNS41IDEyTC05LjU1IDguNVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=',
+    icon: 'http://www.google.com/s2/favicons?domain=https://www.youtube.com',
     isDefault: true
   },
   {
     id: 'wikipedia',
     name: 'Wikipedia',
     url: 'https://ko.wikipedia.org/wiki/Special:Search?search=%s',
-    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDNi40ODYgMiAyIDYuNDg2IDIgMTJTNi40ODYgMjIgMTIgMjJTMjIgMTcuNTE0IDIyIDEyUzE3LjUxNCAyIDEyIDJaTTExLjcgOS42SDE1VjEySDExLjdWOS42Wk05IDE0LjRIMTJWMTdIOVYxNC40WiIgZmlsbD0iIzAwMCIvPgo8L3N2Zz4K',
+    icon: 'http://www.google.com/s2/favicons?domain=https://www.wikipedia.org',
     isDefault: true
   }
 ];
@@ -103,6 +107,14 @@ function initEventListeners() {
       }
     });
   });
+  
+  // 기존 아이콘 사용 체크박스 이벤트
+  elements.useExistingIcon.addEventListener('change', handleUseExistingIconChange);
+  elements.editUseExistingIcon.addEventListener('change', handleEditUseExistingIconChange);
+  
+  // URL 입력 필드 변경 이벤트 (자동 아이콘 업데이트)
+  elements.engineUrl.addEventListener('input', handleUrlInputChange);
+  elements.editEngineUrl.addEventListener('input', handleEditUrlInputChange);
   
   // 검색엔진 목록의 버튼 클릭 이벤트 (이벤트 위임)
   elements.enginesList.addEventListener('click', (e) => {
@@ -184,6 +196,83 @@ function createEngineElement(engine) {
   return div;
 }
 
+// 기존 아이콘 사용 체크박스 변경 처리
+function handleUseExistingIconChange() {
+  if (elements.useExistingIcon.checked) {
+    // 체크박스가 체크되면 아이콘 URL을 자동으로 설정
+    const url = elements.engineUrl.value.trim();
+    if (url) {
+      const domain = extractDomainFromUrl(url);
+      if (domain) {
+        elements.engineIcon.value = `http://www.google.com/s2/favicons?domain=${domain}`;
+      }
+    }
+    elements.iconUrlGroup.style.display = 'none';
+  } else {
+    // 체크박스가 해제되면 아이콘 URL을 비우고 입력 필드 표시
+    elements.engineIcon.value = '';
+    elements.iconUrlGroup.style.display = 'block';
+  }
+}
+
+// 편집 모달에서 기존 아이콘 사용 체크박스 변경 처리
+function handleEditUseExistingIconChange() {
+  if (elements.editUseExistingIcon.checked) {
+    // 체크박스가 체크되면 아이콘 URL을 자동으로 설정
+    const url = elements.editEngineUrl.value.trim();
+    if (url) {
+      const domain = extractDomainFromUrl(url);
+      if (domain) {
+        elements.editEngineIcon.value = `http://www.google.com/s2/favicons?domain=${domain}`;
+      }
+    }
+    elements.editIconUrlGroup.style.display = 'none';
+  } else {
+    // 체크박스가 해제되면 아이콘 URL을 비우고 입력 필드 표시
+    elements.editEngineIcon.value = '';
+    elements.editIconUrlGroup.style.display = 'block';
+  }
+}
+
+// URL에서 도메인 추출
+function extractDomainFromUrl(url) {
+  try {
+    // %s를 제거하고 URL 파싱
+    const cleanUrl = url.replace('%s', 'test');
+    const urlObj = new URL(cleanUrl);
+    return urlObj.hostname;
+  } catch (error) {
+    console.error('URL 파싱 실패:', error);
+    return null;
+  }
+}
+
+// URL 입력 필드 변경 처리 (추가 폼)
+function handleUrlInputChange() {
+  if (elements.useExistingIcon.checked) {
+    const url = elements.engineUrl.value.trim();
+    if (url) {
+      const domain = extractDomainFromUrl(url);
+      if (domain) {
+        elements.engineIcon.value = `http://www.google.com/s2/favicons?domain=${domain}`;
+      }
+    }
+  }
+}
+
+// URL 입력 필드 변경 처리 (편집 모달)
+function handleEditUrlInputChange() {
+  if (elements.editUseExistingIcon.checked) {
+    const url = elements.editEngineUrl.value.trim();
+    if (url) {
+      const domain = extractDomainFromUrl(url);
+      if (domain) {
+        elements.editEngineIcon.value = `http://www.google.com/s2/favicons?domain=${domain}`;
+      }
+    }
+  }
+}
+
 // 검색엔진 추가
 function handleAddEngine() {
   const name = elements.engineName.value.trim();
@@ -243,6 +332,17 @@ function editEngine(engineId) {
   elements.editEngineName.value = engine.name;
   elements.editEngineUrl.value = engine.url;
   elements.editEngineIcon.value = engine.icon;
+  
+  // 기존 아이콘 사용 여부 확인 및 체크박스 설정
+  const isUsingGoogleFavicon = engine.icon && engine.icon.includes('google.com/s2/favicons');
+  elements.editUseExistingIcon.checked = isUsingGoogleFavicon;
+  
+  // 체크박스 상태에 따라 아이콘 URL 입력 필드 표시/숨김
+  if (isUsingGoogleFavicon) {
+    elements.editIconUrlGroup.style.display = 'none';
+  } else {
+    elements.editIconUrlGroup.style.display = 'block';
+  }
   
   showEditModal();
 }
@@ -358,7 +458,15 @@ function handleReset() {
 async function handleSave() {
   try {
     await chrome.storage.sync.set({ searchEngines: searchEngines });
-    showStatus('설정이 저장되었습니다.', 'success');
+    
+    // 설정 저장 후 메뉴 생성 요청
+    try {
+      await chrome.runtime.sendMessage({ action: 'createMenus' });
+      showStatus('설정이 저장되었습니다. 컨텍스트 메뉴가 업데이트되었습니다.', 'success');
+    } catch (error) {
+      console.error('메뉴 생성 요청 실패:', error);
+      showStatus('설정이 저장되었습니다. 컨텍스트 메뉴는 수동으로 설정해주세요.', 'success');
+    }
   } catch (error) {
     console.error('저장 실패:', error);
     showStatus('저장에 실패했습니다.', 'error');
@@ -387,6 +495,8 @@ function clearForm() {
   elements.engineName.value = '';
   elements.engineUrl.value = '';
   elements.engineIcon.value = '';
+  elements.useExistingIcon.checked = false;
+  elements.iconUrlGroup.style.display = 'block';
 }
 
 function showStatus(message, type) {
@@ -491,7 +601,7 @@ function handleImport(event) {
           id: 'google',
           name: 'Google',
           url: 'https://www.google.com/search?q=%s',
-          icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIyLjU2IDEyLjI1QzIyLjU2IDExLjQ3IDIyLjQ5IDEwLjcyIDIyLjM2IDEwSDE2djQuMjVoNi4xOUMyMi4wNSAxNi4xMiAyMS4xNSAxNyAyMCAxN0MxOC44NSAxNyAxNy45NSAxNi4xMiAxNy44MSAxNUgxNnY0aDEwLjU2QzIyLjU2IDEzIDIyLjU2IDEyLjUgMjIuNTYgMTIuMjVaIiBmaWxsPSIjNEY4NUY0Ii8+CjxwYXRoIGQ9Ik0yMiA3SDEwVjEzSDIyVjdaIiBmaWxsPSIjRUE0MzM1Ii8+CjxwYXRoIGQ9Ik0yIDdIMTBWMTNIMlY3WiIgZmlsbD0iI0ZCQkMwNSIvPgo8cGF0aCBkPSJNMTAgMkg2VjEwSDEwVjJaIiBmaWxsPSIjMzRBODUzIi8+Cjwvc3ZnPgo=',
+          icon: 'http://www.google.com/s2/favicons?domain=https://www.google.com',
           isDefault: true
         });
       }

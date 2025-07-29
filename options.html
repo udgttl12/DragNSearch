@@ -29,8 +29,18 @@
             <small>%s는 검색어로 대체됩니다</small>
           </div>
           <div class="form-group">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <input type="checkbox" id="use-existing-icon" style="width: fit-content;">
+              <label for="use-existing-icon" style="margin-bottom: 0;">
+                기존 검색엔진 아이콘 등록하기
+              </label>
+            </div>
+            <small>체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
+          </div>
+          <div class="form-group" id="icon-url-group">
             <label for="engine-icon">아이콘 URL (선택사항)</label>
             <input type="url" id="engine-icon" placeholder="https://example.com/icon.png">
+            <small>기존 아이콘을 사용하지 않을 때만 입력하세요</small>
           </div>
           <button type="button" id="add-engine-btn" class="btn btn-primary">
             <span class="btn-icon">➕</span>
@@ -113,8 +123,18 @@
         <small>%s는 검색어로 대체됩니다</small>
       </div>
       <div class="form-group">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="edit-use-existing-icon" style="width: fit-content;">
+          <label for="edit-use-existing-icon" style="margin-bottom: 0;">
+            기존 검색엔진 아이콘 등록하기
+          </label>
+        </div>
+        <small>체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
+      </div>
+      <div class="form-group" id="edit-icon-url-group">
         <label for="edit-engine-icon">아이콘 URL</label>
         <input type="url" id="edit-engine-icon">
+        <small>기존 아이콘을 사용하지 않을 때만 입력하세요</small>
       </div>
       <div class="modal-actions">
         <button type="button" id="edit-cancel" class="btn btn-secondary">취소</button>

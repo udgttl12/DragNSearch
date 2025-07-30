@@ -33,28 +33,80 @@ const DEFAULT_SEARCH_ENGINES = [
   }
 ];
 
+// 검색엔진 설정 확인 및 복구 함수
+async function ensureSearchEngines() {
+  try {
+    const { searchEngines } = await chrome.storage.sync.get('searchEngines');
+    
+    if (!searchEngines || searchEngines.length === 0) {
+      console.log('검색엔진 설정이 없음 - 기본값 설정');
+      await chrome.storage.sync.set({ searchEngines: DEFAULT_SEARCH_ENGINES });
+      return DEFAULT_SEARCH_ENGINES;
+    }
+    
+    // Google 검색엔진이 없으면 추가 (필수 검색엔진)
+    const hasGoogle = searchEngines.some(engine => engine.id === 'google');
+    if (!hasGoogle) {
+      console.log('Google 검색엔진이 없음 - 추가');
+      const googleEngine = DEFAULT_SEARCH_ENGINES.find(engine => engine.id === 'google');
+      searchEngines.unshift(googleEngine);
+      await chrome.storage.sync.set({ searchEngines });
+    }
+    
+    return searchEngines;
+  } catch (error) {
+    console.error('검색엔진 설정 확인 실패:', error);
+    // 오류 시 기본값으로 복구
+    await chrome.storage.sync.set({ searchEngines: DEFAULT_SEARCH_ENGINES });
+    return DEFAULT_SEARCH_ENGINES;
+  }
+}
+
+// 모든 탭에 검색엔진 업데이트 알림
+async function notifyAllTabsEngineUpdate() {
+  try {
+    const tabs = await chrome.tabs.query({});
+    const promises = tabs.map(tab => {
+      return chrome.tabs.sendMessage(tab.id, { 
+        action: 'updateEngines' 
+      }).catch(error => {
+        // 콘텐츠 스크립트가 없는 탭은 무시
+        console.log(`탭 ${tab.id}에 메시지 전송 실패 (정상):`, error.message);
+      });
+    });
+    
+    await Promise.allSettled(promises);
+    console.log('모든 탭에 검색엔진 업데이트 알림 완료');
+  } catch (error) {
+    console.error('탭 업데이트 알림 실패:', error);
+  }
+}
+
 // 확장 기능 설치/업데이트 시 실행
 chrome.runtime.onInstalled.addListener(async (details) => {
   try {
     console.log('확장 기능 설치/업데이트:', details.reason);
     
     if (details.reason === 'install') {
-      // 새로 설치된 경우: 기본 검색엔진 설정만 하고 메뉴는 전혀 건드리지 않음
-      await chrome.storage.sync.set({ searchEngines: DEFAULT_SEARCH_ENGINES });
+      // 새로 설치된 경우: 기본 검색엔진 설정
+      console.log('새로 설치됨 - 기본 검색엔진 설정 시작');
+      await ensureSearchEngines();
       console.log('새로 설치됨 - 기본 검색엔진 설정 완료 (메뉴는 사용자가 직접 설정)');
     } else if (details.reason === 'update') {
-      // 업데이트된 경우: 기존 설정 유지, 메뉴는 전혀 건드리지 않음
-      const { searchEngines } = await chrome.storage.sync.get('searchEngines');
-      if (!searchEngines || searchEngines.length === 0) {
-        // 기존 설정이 없는 경우에만 기본값 설정
-        await chrome.storage.sync.set({ searchEngines: DEFAULT_SEARCH_ENGINES });
-        console.log('업데이트됨 - 기본 검색엔진 설정 완료 (메뉴는 사용자가 직접 설정)');
-      } else {
-        console.log('업데이트됨 - 기존 설정 유지 (메뉴는 사용자가 직접 설정)');
-      }
+      // 업데이트된 경우: 기존 설정 확인 및 복구
+      console.log('업데이트됨 - 기존 설정 확인 시작');
+      await ensureSearchEngines();
+      console.log('업데이트됨 - 설정 확인 완료 (메뉴는 사용자가 직접 설정)');
     }
   } catch (error) {
     console.error('확장 기능 초기화 실패:', error);
+    // 오류 시에도 기본값 설정 시도
+    try {
+      await chrome.storage.sync.set({ searchEngines: DEFAULT_SEARCH_ENGINES });
+      console.log('오류 복구: 기본 검색엔진 설정 완료');
+    } catch (retryError) {
+      console.error('기본값 설정도 실패:', retryError);
+    }
   }
 });
 
@@ -146,26 +198,22 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 });
 
-// 확장 기능 시작 시 메뉴는 전혀 건드리지 않음
+// 확장 기능 시작 시 검색엔진 설정 확인
 chrome.runtime.onStartup.addListener(async () => {
   try {
-    console.log('확장 기능 시작 - 메뉴는 사용자가 직접 설정');
-    // 메뉴는 전혀 건드리지 않고, 설정만 확인
-    const { searchEngines } = await chrome.storage.sync.get('searchEngines');
-    if (!searchEngines || searchEngines.length === 0) {
-      console.log('검색엔진 설정이 없음 - 기본값 설정');
-      await chrome.storage.sync.set({ searchEngines: DEFAULT_SEARCH_ENGINES });
-    }
+    console.log('확장 기능 시작 - 검색엔진 설정 확인');
+    await ensureSearchEngines();
+    console.log('시작 시 검색엔진 설정 확인 완료');
   } catch (error) {
     console.error('시작 시 설정 확인 실패:', error);
   }
 });
 
-// 검색엔진 변경 시 메뉴는 전혀 건드리지 않음
-chrome.storage.onChanged.addListener((changes, namespace) => {
+// 검색엔진 변경 시 모든 탭에 업데이트 알림
+chrome.storage.onChanged.addListener(async (changes, namespace) => {
   if (namespace === 'sync' && changes.searchEngines) {
-    console.log('검색엔진 설정 변경됨 - 메뉴는 사용자가 직접 설정');
-    // 메뉴는 전혀 건드리지 않음 (사용자가 직접 설정 페이지에서 관리)
+    console.log('검색엔진 설정 변경됨 - 모든 탭에 업데이트 알림');
+    await notifyAllTabsEngineUpdate();
   }
 });
 
@@ -205,8 +253,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   
   if (request.action === 'getEngines') {
-    chrome.storage.sync.get('searchEngines').then(({ searchEngines }) => {
-      sendResponse({ engines: searchEngines || [] });
+    // 검색엔진 요청 시 설정 확인 및 복구
+    ensureSearchEngines().then((searchEngines) => {
+      sendResponse({ engines: searchEngines });
+    }).catch((error) => {
+      console.error('검색엔진 로드 실패:', error);
+      sendResponse({ engines: DEFAULT_SEARCH_ENGINES });
     });
     return true; // 비동기 응답을 위해 true 반환
   }
@@ -232,6 +284,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: true });
     }).catch((error) => {
       console.error('메뉴 생성 실패:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true; // 비동기 응답을 위해 true 반환
+  }
+  
+  // 설정 페이지에서 모든 탭 업데이트 요청
+  if (request.action === 'notifyAllTabs') {
+    console.log('설정 페이지에서 모든 탭 업데이트 요청 받음');
+    notifyAllTabsEngineUpdate().then(() => {
+      sendResponse({ success: true });
+    }).catch((error) => {
+      console.error('탭 업데이트 알림 실패:', error);
       sendResponse({ success: false, error: error.message });
     });
     return true; // 비동기 응답을 위해 true 반환

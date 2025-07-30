@@ -45,6 +45,11 @@ async function loadSearchEngines() {
         if (response && response.engines) {
           searchEngines = response.engines;
           console.log('검색엔진 로드 완료:', searchEngines);
+          
+          // 팝업 재생성 (검색엔진이 변경된 경우)
+          if (popupElement) {
+            createPopup();
+          }
         } else {
           // 응답이 없을 경우 기본 검색엔진 사용
           searchEngines = [
@@ -74,6 +79,36 @@ async function loadSearchEngines() {
       resolve();
     }
   });
+}
+
+// background script에서 메시지 수신 리스너
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'updateEngines') {
+    console.log('검색엔진 업데이트 요청 받음');
+    // 검색엔진 재로드
+    loadSearchEngines().then(() => {
+      console.log('검색엔진 업데이트 완료');
+      sendResponse({ success: true });
+    }).catch((error) => {
+      console.error('검색엔진 업데이트 실패:', error);
+      sendResponse({ success: false, error: error.message });
+    });
+    return true; // 비동기 응답을 위해 true 반환
+  }
+});
+
+// Storage 변경 감지 (추가 안전장치)
+try {
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync' && changes.searchEngines) {
+      console.log('Storage 변경 감지 - 검색엔진 업데이트');
+      loadSearchEngines().catch((error) => {
+        console.error('검색엔진 업데이트 실패:', error);
+      });
+    }
+  });
+} catch (error) {
+  console.log('Storage 리스너 등록 실패 (정상):', error.message);
 }
 
 // 팝업 생성

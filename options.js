@@ -273,6 +273,16 @@ function handleEditUrlInputChange() {
   }
 }
 
+// 모든 탭에 검색엔진 업데이트 알림
+async function notifyAllTabsUpdate() {
+  try {
+    await chrome.runtime.sendMessage({ action: 'notifyAllTabs' });
+    console.log('모든 탭 업데이트 알림 완료');
+  } catch (error) {
+    console.log('탭 업데이트 알림 실패 (정상):', error.message);
+  }
+}
+
 // 검색엔진 추가
 function handleAddEngine() {
   const name = elements.engineName.value.trim();
@@ -315,6 +325,9 @@ function handleAddEngine() {
     renderEnginesList();
     clearForm();
     showStatus('검색엔진이 추가되었습니다.', 'success');
+    
+    // 모든 탭에 업데이트 알림
+    notifyAllTabsUpdate();
   }).catch((error) => {
     console.error('추가 저장 실패:', error);
     // 실패 시 배열에서 제거
@@ -389,6 +402,9 @@ function handleEditSave() {
       renderEnginesList();
       hideEditModal();
       showStatus('검색엔진이 수정되었습니다.', 'success');
+      
+      // 모든 탭에 업데이트 알림
+      notifyAllTabsUpdate();
     }).catch((error) => {
       console.error('편집 저장 실패:', error);
       // 실패 시 원래 상태로 복원
@@ -420,6 +436,9 @@ function deleteEngine(engineId) {
       renderEnginesList();
       hideConfirmModal();
       showStatus('검색엔진이 삭제되었습니다.', 'success');
+      
+      // 모든 탭에 업데이트 알림
+      notifyAllTabsUpdate();
     } catch (error) {
       console.error('삭제 저장 실패:', error);
       showStatus('삭제에 실패했습니다.', 'error');
@@ -445,6 +464,9 @@ function handleReset() {
       renderEnginesList();
       hideConfirmModal();
       showStatus('설정이 초기화되었습니다.', 'success');
+      
+      // 모든 탭에 업데이트 알림
+      notifyAllTabsUpdate();
     } catch (error) {
       console.error('초기화 저장 실패:', error);
       showStatus('초기화에 실패했습니다.', 'error');
@@ -458,6 +480,9 @@ function handleReset() {
 async function handleSave() {
   try {
     await chrome.storage.sync.set({ searchEngines: searchEngines });
+    
+    // 모든 탭에 업데이트 알림
+    await notifyAllTabsUpdate();
     
     // 설정 저장 후 메뉴 생성 요청
     try {
@@ -619,6 +644,9 @@ function handleImport(event) {
           renderEnginesList();
           hideConfirmModal();
           showStatus(`${validEngines.length}개의 검색엔진을 성공적으로 가져왔습니다.`, 'success');
+          
+          // 모든 탭에 업데이트 알림
+          notifyAllTabsUpdate();
         } catch (error) {
           console.error('가져오기 저장 실패:', error);
           showStatus('설정 가져오기에 실패했습니다.', 'error');
@@ -636,6 +664,4 @@ function handleImport(event) {
   reader.readAsText(file);
   // 파일 입력 초기화 (같은 파일 다시 선택 가능하도록)
   event.target.value = '';
-}
-
-// 더 이상 전역 함수 노출이 필요하지 않음 (이벤트 위임 사용) 
+} 

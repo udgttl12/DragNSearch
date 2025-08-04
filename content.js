@@ -5,7 +5,7 @@ let selectedText = '';
 let mousePosition = { x: 0, y: 0 };
 let isSearching = false; // 검색 중복 실행 방지 플래그
 let layoutSetting = 'horizontal'; // 기본값: 가로 배치
-let popupDistance = 3; // 기본값: 3픽셀
+let popupDistance = 15; // 기본값: 15픽셀
 
 // 검색엔진 데이터 로드
 async function loadSearchEngines() {
@@ -101,7 +101,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     layoutSetting = request.layoutSetting || 'horizontal';
   } else if (request.action === 'updatePopupDistance') {
     console.log('팝업 거리 업데이트 요청 받음:', request.popupDistance);
-    popupDistance = request.popupDistance || 3;
+    popupDistance = request.popupDistance || 15;
     // 팝업 재생성 (레이아웃이 변경된 경우)
     if (popupElement) {
       createPopup();
@@ -131,7 +131,7 @@ try {
       }
       if (changes.popupDistance) {
         console.log('Storage 변경 감지 - 팝업 거리 설정 업데이트');
-        popupDistance = changes.popupDistance.newValue || 3;
+        popupDistance = changes.popupDistance.newValue || 15;
       }
     }
   });
@@ -512,12 +512,12 @@ async function loadSettings() {
   try {
     const result = await chrome.storage.sync.get(['layoutSetting', 'popupDistance']);
     layoutSetting = result.layoutSetting || 'horizontal';
-    popupDistance = result.popupDistance || 3;
+    popupDistance = result.popupDistance || 15;
     console.log('설정 로드 완료:', { layoutSetting, popupDistance });
   } catch (error) {
     console.error('설정 로드 실패:', error);
     layoutSetting = 'horizontal';
-    popupDistance = 3;
+    popupDistance = 15;
   }
 }
 

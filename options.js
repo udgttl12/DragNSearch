@@ -2,7 +2,7 @@
 let searchEngines = [];
 let editingEngineId = null;
 let layoutSetting = 'horizontal'; // 기본값: 가로 배치
-let popupDistance = 3; // 기본값: 3픽셀
+let popupDistance = 15; // 기본값: 15픽셀
 
 // DOM 요소들
 const elements = {
@@ -694,7 +694,7 @@ async function loadSettings() {
     }
     
     // 팝업 거리 설정 로드
-    popupDistance = result.popupDistance || 3;
+    popupDistance = result.popupDistance || 15;
     elements.popupDistance.value = popupDistance;
     elements.popupDistanceValue.textContent = `${popupDistance}px`;
     
@@ -703,7 +703,7 @@ async function loadSettings() {
     console.error('설정 로드 실패:', error);
     // 기본값으로 설정
     layoutSetting = 'horizontal';
-    popupDistance = 3;
+    popupDistance = 15;
     elements.layoutHorizontal.checked = true;
     elements.popupDistance.value = popupDistance;
     elements.popupDistanceValue.textContent = `${popupDistance}px`;

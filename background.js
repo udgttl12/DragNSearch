@@ -82,6 +82,27 @@ async function notifyAllTabsEngineUpdate() {
   }
 }
 
+// 모든 탭에 레이아웃 업데이트 알림
+async function notifyAllTabsLayoutUpdate(layoutSetting) {
+  try {
+    const tabs = await chrome.tabs.query({});
+    const promises = tabs.map(tab => {
+      return chrome.tabs.sendMessage(tab.id, { 
+        action: 'updateLayout',
+        layoutSetting: layoutSetting
+      }).catch(error => {
+        // 콘텐츠 스크립트가 없는 탭은 무시
+        console.log(`탭 ${tab.id}에 레이아웃 업데이트 메시지 전송 실패 (정상):`, error.message);
+      });
+    });
+    
+    await Promise.allSettled(promises);
+    console.log('모든 탭에 레이아웃 업데이트 알림 완료');
+  } catch (error) {
+    console.error('탭 레이아웃 업데이트 알림 실패:', error);
+  }
+}
+
 // 확장 기능 설치/업데이트 시 실행
 chrome.runtime.onInstalled.addListener(async (details) => {
   try {
@@ -292,12 +313,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // 설정 페이지에서 모든 탭 업데이트 요청
   if (request.action === 'notifyAllTabs') {
     console.log('설정 페이지에서 모든 탭 업데이트 요청 받음');
-    notifyAllTabsEngineUpdate().then(() => {
-      sendResponse({ success: true });
-    }).catch((error) => {
-      console.error('탭 업데이트 알림 실패:', error);
-      sendResponse({ success: false, error: error.message });
-    });
+    
+    if (request.type === 'layoutUpdate') {
+      // 레이아웃 업데이트 알림
+      notifyAllTabsLayoutUpdate(request.layoutSetting).then(() => {
+        sendResponse({ success: true });
+      }).catch((error) => {
+        console.error('탭 레이아웃 업데이트 알림 실패:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    } else {
+      // 기본 검색엔진 업데이트 알림
+      notifyAllTabsEngineUpdate().then(() => {
+        sendResponse({ success: true });
+      }).catch((error) => {
+        console.error('탭 업데이트 알림 실패:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    }
     return true; // 비동기 응답을 위해 true 반환
   }
 }); 

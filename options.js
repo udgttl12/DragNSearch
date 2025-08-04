@@ -1,6 +1,7 @@
 // 전역 변수
 let searchEngines = [];
 let editingEngineId = null;
+let layoutSetting = 'horizontal'; // 기본값: 가로 배치
 
 // DOM 요소들
 const elements = {
@@ -14,6 +15,10 @@ const elements = {
   resetBtn: document.getElementById('reset-btn'),
   saveBtn: document.getElementById('save-btn'),
   statusMessage: document.getElementById('status-message'),
+  
+  // 표시 설정 요소들
+  layoutHorizontal: document.getElementById('layout-horizontal'),
+  layoutGrid: document.getElementById('layout-grid'),
   
   // 데이터 관리 요소들
   exportBtn: document.getElementById('export-btn'),
@@ -71,6 +76,7 @@ const DEFAULT_SEARCH_ENGINES = [
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
   loadSearchEngines();
+  loadLayoutSetting();
   initEventListeners();
 });
 
@@ -79,6 +85,10 @@ function initEventListeners() {
   elements.addEngineBtn.addEventListener('click', handleAddEngine);
   elements.resetBtn.addEventListener('click', handleReset);
   elements.saveBtn.addEventListener('click', handleSave);
+  
+  // 표시 설정 이벤트
+  elements.layoutHorizontal.addEventListener('change', handleLayoutChange);
+  elements.layoutGrid.addEventListener('change', handleLayoutChange);
   
   // 데이터 관리 이벤트
   elements.exportBtn.addEventListener('click', handleExport);
@@ -664,4 +674,59 @@ function handleImport(event) {
   reader.readAsText(file);
   // 파일 입력 초기화 (같은 파일 다시 선택 가능하도록)
   event.target.value = '';
+}
+
+// 레이아웃 설정 로드
+async function loadLayoutSetting() {
+  try {
+    const result = await chrome.storage.sync.get('layoutSetting');
+    layoutSetting = result.layoutSetting || 'horizontal';
+    
+    // 라디오 버튼 체크 상태 설정
+    if (layoutSetting === 'horizontal') {
+      elements.layoutHorizontal.checked = true;
+    } else if (layoutSetting === 'grid') {
+      elements.layoutGrid.checked = true;
+    }
+    
+    console.log('레이아웃 설정 로드 완료:', layoutSetting);
+  } catch (error) {
+    console.error('레이아웃 설정 로드 실패:', error);
+    layoutSetting = 'horizontal';
+    elements.layoutHorizontal.checked = true;
+  }
+}
+
+// 레이아웃 설정 변경 처리
+async function handleLayoutChange(event) {
+  const newLayout = event.target.value;
+  layoutSetting = newLayout;
+  
+  try {
+    // 즉시 저장
+    await chrome.storage.sync.set({ layoutSetting: layoutSetting });
+    console.log('레이아웃 설정 저장 완료:', layoutSetting);
+    
+    // 모든 탭에 레이아웃 변경 알림
+    await notifyAllTabsLayoutUpdate();
+    
+    showStatus('표시 설정이 저장되었습니다.', 'success');
+  } catch (error) {
+    console.error('레이아웃 설정 저장 실패:', error);
+    showStatus('설정 저장에 실패했습니다.', 'error');
+  }
+}
+
+// 모든 탭에 레이아웃 업데이트 알림
+async function notifyAllTabsLayoutUpdate() {
+  try {
+    await chrome.runtime.sendMessage({ 
+      action: 'notifyAllTabs', 
+      type: 'layoutUpdate',
+      layoutSetting: layoutSetting 
+    });
+    console.log('모든 탭 레이아웃 업데이트 알림 완료');
+  } catch (error) {
+    console.log('탭 레이아웃 업데이트 알림 실패 (정상):', error.message);
+  }
 } 

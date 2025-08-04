@@ -3,7 +3,6 @@
   position: fixed;
   z-index: 2147483647; /* 최상위 레이어 */
   display: none;
-  flex-direction: row;
   gap: 8px;
   padding: 8px;
   background: rgba(255, 255, 255, 0.95);
@@ -15,6 +14,23 @@
   pointer-events: all;
   user-select: none;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 가로 배치 레이아웃 */
+.drag-search-popup.horizontal-layout {
+  display: flex;
+  flex-direction: row;
+}
+
+/* 격자 배치 레이아웃 (동적 크기) */
+.drag-search-popup.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
+  grid-template-rows: repeat(var(--grid-rows, 3), 1fr);
+  width: calc(var(--grid-size, 3) * 40px);
+  height: calc(var(--grid-size, 3) * 40px);
+  gap: 6px;
+  padding: 6px;
 }
 
 /* 팝업 등장 애니메이션 */
@@ -120,21 +136,56 @@
   }
 }
 
+/* 격자 레이아웃에서의 아이콘 크기 조정 */
+.drag-search-popup.grid-layout .search-engine-icon {
+  width: calc(40px - 6px);
+  height: calc(40px - 6px);
+}
+
+.drag-search-popup.grid-layout .search-engine-icon img {
+  width: calc(40px - 22px);
+  height: calc(40px - 22px);
+}
+
+/* 격자 레이아웃에서 툴팁 위치 조정 */
+.drag-search-popup.grid-layout .search-engine-icon::after {
+  bottom: -28px;
+  font-size: 11px;
+  padding: 3px 6px;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-  .drag-search-popup {
+  .drag-search-popup.horizontal-layout {
     gap: 6px;
     padding: 6px;
   }
   
-  .search-engine-icon {
+  .drag-search-popup.horizontal-layout .search-engine-icon {
     width: 32px;
     height: 32px;
   }
   
-  .search-engine-icon img {
+  .drag-search-popup.horizontal-layout .search-engine-icon img {
     width: 18px;
     height: 18px;
+  }
+  
+  .drag-search-popup.grid-layout {
+    width: calc(var(--grid-size, 3) * 36px);
+    height: calc(var(--grid-size, 3) * 36px);
+    gap: 4px;
+    padding: 4px;
+  }
+  
+  .drag-search-popup.grid-layout .search-engine-icon {
+    width: calc(36px - 4px);
+    height: calc(36px - 4px);
+  }
+  
+  .drag-search-popup.grid-layout .search-engine-icon img {
+    width: calc(36px - 18px);
+    height: calc(36px - 18px);
   }
 }
 

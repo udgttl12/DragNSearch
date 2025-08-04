@@ -4,6 +4,7 @@ let popupElement = null;
 let selectedText = '';
 let mousePosition = { x: 0, y: 0 };
 let isSearching = false; // 검색 중복 실행 방지 플래그
+let layoutSetting = 'horizontal'; // 기본값: 가로 배치
 
 // 검색엔진 데이터 로드
 async function loadSearchEngines() {
@@ -94,21 +95,50 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: false, error: error.message });
     });
     return true; // 비동기 응답을 위해 true 반환
+  } else if (request.action === 'updateLayout') {
+    console.log('레이아웃 업데이트 요청 받음:', request.layoutSetting);
+    layoutSetting = request.layoutSetting || 'horizontal';
+    // 팝업 재생성 (레이아웃이 변경된 경우)
+    if (popupElement) {
+      createPopup();
+    }
+    sendResponse({ success: true });
+    return true;
   }
 });
 
 // Storage 변경 감지 (추가 안전장치)
 try {
   chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'sync' && changes.searchEngines) {
-      console.log('Storage 변경 감지 - 검색엔진 업데이트');
-      loadSearchEngines().catch((error) => {
-        console.error('검색엔진 업데이트 실패:', error);
-      });
+    if (namespace === 'sync') {
+      if (changes.searchEngines) {
+        console.log('Storage 변경 감지 - 검색엔진 업데이트');
+        loadSearchEngines().catch((error) => {
+          console.error('검색엔진 업데이트 실패:', error);
+        });
+      }
+      if (changes.layoutSetting) {
+        console.log('Storage 변경 감지 - 레이아웃 설정 업데이트');
+        layoutSetting = changes.layoutSetting.newValue || 'horizontal';
+        // 팝업 재생성 (레이아웃이 변경된 경우)
+        if (popupElement) {
+          createPopup();
+        }
+      }
     }
   });
 } catch (error) {
   console.log('Storage 리스너 등록 실패 (정상):', error.message);
+}
+
+// 그리드 크기 계산 함수
+function calculateGridSize(engineCount) {
+  if (engineCount <= 1) return 1;
+  if (engineCount <= 4) return 2;   // 2x2: 1-4개
+  if (engineCount <= 9) return 3;   // 3x3: 5-9개  
+  if (engineCount <= 16) return 4;  // 4x4: 10-16개
+  if (engineCount <= 25) return 5;  // 5x5: 17-25개
+  return 6; // 최대 6x6으로 제한 (26개 이상)
 }
 
 // 팝업 생성
@@ -119,7 +149,20 @@ function createPopup() {
 
   popupElement = document.createElement('div');
   popupElement.id = 'drag-search-popup';
-  popupElement.className = 'drag-search-popup';
+  
+  // 그리드 크기 계산
+  const gridSize = calculateGridSize(searchEngines.length);
+  const isGridLayout = layoutSetting === 'grid';
+  
+  popupElement.className = `drag-search-popup ${isGridLayout ? 'grid-layout' : 'horizontal-layout'}`;
+  
+  // 그리드 레이아웃인 경우 동적으로 스타일 설정
+  if (isGridLayout) {
+    popupElement.style.setProperty('--grid-size', gridSize);
+    popupElement.style.setProperty('--grid-columns', gridSize);
+    popupElement.style.setProperty('--grid-rows', gridSize);
+    console.log(`그리드 배치: ${searchEngines.length}개 엔진 → ${gridSize}x${gridSize} 그리드`);
+  }
   
   // 검색엔진 아이콘들 생성
   searchEngines.forEach(engine => {
@@ -192,7 +235,13 @@ function showPopup(x, y) {
   
   popupElement.style.left = `${left}px`;
   popupElement.style.top = `${top}px`;
-  popupElement.style.display = 'flex';
+  
+  // 레이아웃에 따라 적절한 display 설정
+  if (layoutSetting === 'grid') {
+    popupElement.style.display = 'grid';
+  } else {
+    popupElement.style.display = 'flex';
+  }
 }
 
 // 팝업 숨기기
@@ -450,9 +499,22 @@ document.addEventListener('dragstart', (e) => {
 document.addEventListener('scroll', hidePopup);
 window.addEventListener('resize', hidePopup);
 
+// 레이아웃 설정 로드
+async function loadLayoutSetting() {
+  try {
+    const result = await chrome.storage.sync.get('layoutSetting');
+    layoutSetting = result.layoutSetting || 'horizontal';
+    console.log('레이아웃 설정 로드 완료:', layoutSetting);
+  } catch (error) {
+    console.error('레이아웃 설정 로드 실패:', error);
+    layoutSetting = 'horizontal';
+  }
+}
+
 // 초기화
 (async function init() {
   await loadSearchEngines();
+  await loadLayoutSetting();
   createPopup();
   hidePopup();
 })(); 

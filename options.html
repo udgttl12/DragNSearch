@@ -50,6 +50,35 @@
       </section>
 
       <section class="section">
+        <h2>검색엔진 표시 설정</h2>
+        <div class="display-settings">
+          <div class="setting-group">
+            <h3>드래그 시 검색엔진 배치</h3>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="layout" value="horizontal" id="layout-horizontal">
+                <span class="radio-label">
+                  <span class="radio-title">가로 배치</span>
+                  <span class="radio-description">검색엔진을 한 줄로 가로로 표시합니다</span>
+                </span>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="layout" value="grid" id="layout-grid">
+                <span class="radio-label">
+                  <span class="radio-title">그리드 배치</span>
+                  <span class="radio-description">검색엔진 개수에 따라 자동으로 격자 크기가 조정됩니다<br>
+                    <small style="opacity: 0.8; margin-top: 2px; display: block;">
+                      1-4개: 2x2 • 5-9개: 3x3 • 10-16개: 4x4 • 17-25개: 5x5 • 26개 이상: 6x6
+                    </small>
+                  </span>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
         <h2>데이터 관리</h2>
         <div class="data-management">
           <div class="management-group">
@@ -70,6 +99,16 @@
             <p class="management-description">
               검색엔진 설정을 JSON 파일로 백업하거나 복원할 수 있습니다.
             </p>
+          </div>
+          
+          <div class="management-group warning-section">
+            <h3>⚠️ 중요 알림</h3>
+            <div class="warning-content">
+              <p><strong>확장프로그램을 삭제하기 전에 반드시 설정을 백업하세요!</strong></p>
+              <p>확장프로그램을 삭제하면 등록한 모든 검색엔진 정보가 영구적으로 삭제됩니다. 
+              삭제 전에 위의 "설정 내보내기" 버튼을 사용하여 JSON 파일로 백업을 저장하시기 바랍니다.</p>
+              <p>백업 후 확장프로그램을 재설치하면 "설정 가져오기"로 모든 검색엔진을 복원할 수 있습니다.</p>
+            </div>
           </div>
         </div>
       </section>

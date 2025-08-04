@@ -5,6 +5,7 @@ let selectedText = '';
 let mousePosition = { x: 0, y: 0 };
 let isSearching = false; // 검색 중복 실행 방지 플래그
 let layoutSetting = 'horizontal'; // 기본값: 가로 배치
+let popupDistance = 3; // 기본값: 3픽셀
 
 // 검색엔진 데이터 로드
 async function loadSearchEngines() {
@@ -98,6 +99,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'updateLayout') {
     console.log('레이아웃 업데이트 요청 받음:', request.layoutSetting);
     layoutSetting = request.layoutSetting || 'horizontal';
+  } else if (request.action === 'updatePopupDistance') {
+    console.log('팝업 거리 업데이트 요청 받음:', request.popupDistance);
+    popupDistance = request.popupDistance || 3;
     // 팝업 재생성 (레이아웃이 변경된 경우)
     if (popupElement) {
       createPopup();
@@ -124,6 +128,10 @@ try {
         if (popupElement) {
           createPopup();
         }
+      }
+      if (changes.popupDistance) {
+        console.log('Storage 변경 감지 - 팝업 거리 설정 업데이트');
+        popupDistance = changes.popupDistance.newValue || 3;
       }
     }
   });
@@ -220,17 +228,17 @@ function showPopup(x, y) {
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
   
-  let left = x + 10;
-  let top = y - popupRect.height - 10;
+  let left = x + popupDistance;
+  let top = y - popupRect.height - popupDistance;
   
   // 우측 경계 체크
   if (left + popupRect.width > viewportWidth) {
-    left = x - popupRect.width - 10;
+    left = x - popupRect.width - popupDistance;
   }
   
   // 상단 경계 체크
   if (top < 0) {
-    top = y + 20;
+    top = y + popupDistance;
   }
   
   popupElement.style.left = `${left}px`;
@@ -499,22 +507,24 @@ document.addEventListener('dragstart', (e) => {
 document.addEventListener('scroll', hidePopup);
 window.addEventListener('resize', hidePopup);
 
-// 레이아웃 설정 로드
-async function loadLayoutSetting() {
+// 설정 로드
+async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get('layoutSetting');
+    const result = await chrome.storage.sync.get(['layoutSetting', 'popupDistance']);
     layoutSetting = result.layoutSetting || 'horizontal';
-    console.log('레이아웃 설정 로드 완료:', layoutSetting);
+    popupDistance = result.popupDistance || 3;
+    console.log('설정 로드 완료:', { layoutSetting, popupDistance });
   } catch (error) {
-    console.error('레이아웃 설정 로드 실패:', error);
+    console.error('설정 로드 실패:', error);
     layoutSetting = 'horizontal';
+    popupDistance = 3;
   }
 }
 
 // 초기화
 (async function init() {
   await loadSearchEngines();
-  await loadLayoutSetting();
+  await loadSettings();
   createPopup();
   hidePopup();
 })(); 

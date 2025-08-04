@@ -103,6 +103,27 @@ async function notifyAllTabsLayoutUpdate(layoutSetting) {
   }
 }
 
+// 모든 탭에 팝업 거리 업데이트 알림
+async function notifyAllTabsPopupDistanceUpdate(popupDistance) {
+  try {
+    const tabs = await chrome.tabs.query({});
+    const promises = tabs.map(tab => {
+      return chrome.tabs.sendMessage(tab.id, { 
+        action: 'updatePopupDistance',
+        popupDistance: popupDistance
+      }).catch(error => {
+        // 콘텐츠 스크립트가 없는 탭은 무시
+        console.log(`탭 ${tab.id}에 팝업 거리 업데이트 메시지 전송 실패 (정상):`, error.message);
+      });
+    });
+    
+    await Promise.allSettled(promises);
+    console.log('모든 탭에 팝업 거리 업데이트 알림 완료');
+  } catch (error) {
+    console.error('탭 팝업 거리 업데이트 알림 실패:', error);
+  }
+}
+
 // 확장 기능 설치/업데이트 시 실행
 chrome.runtime.onInstalled.addListener(async (details) => {
   try {
@@ -320,6 +341,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ success: true });
       }).catch((error) => {
         console.error('탭 레이아웃 업데이트 알림 실패:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+    } else if (request.type === 'popupDistanceUpdate') {
+      // 팝업 거리 업데이트 알림
+      notifyAllTabsPopupDistanceUpdate(request.popupDistance).then(() => {
+        sendResponse({ success: true });
+      }).catch((error) => {
+        console.error('탭 팝업 거리 업데이트 알림 실패:', error);
         sendResponse({ success: false, error: error.message });
       });
     } else {

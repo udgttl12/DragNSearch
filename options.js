@@ -2,6 +2,7 @@
 let searchEngines = [];
 let editingEngineId = null;
 let layoutSetting = 'horizontal'; // 기본값: 가로 배치
+let popupDistance = 3; // 기본값: 3픽셀
 
 // DOM 요소들
 const elements = {
@@ -19,6 +20,8 @@ const elements = {
   // 표시 설정 요소들
   layoutHorizontal: document.getElementById('layout-horizontal'),
   layoutGrid: document.getElementById('layout-grid'),
+  popupDistance: document.getElementById('popup-distance'),
+  popupDistanceValue: document.getElementById('popup-distance-value'),
   
   // 데이터 관리 요소들
   exportBtn: document.getElementById('export-btn'),
@@ -76,7 +79,7 @@ const DEFAULT_SEARCH_ENGINES = [
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
   loadSearchEngines();
-  loadLayoutSetting();
+  loadSettings();
   initEventListeners();
 });
 
@@ -89,6 +92,7 @@ function initEventListeners() {
   // 표시 설정 이벤트
   elements.layoutHorizontal.addEventListener('change', handleLayoutChange);
   elements.layoutGrid.addEventListener('change', handleLayoutChange);
+  elements.popupDistance.addEventListener('input', handlePopupDistanceChange);
   
   // 데이터 관리 이벤트
   elements.exportBtn.addEventListener('click', handleExport);
@@ -676,24 +680,33 @@ function handleImport(event) {
   event.target.value = '';
 }
 
-// 레이아웃 설정 로드
-async function loadLayoutSetting() {
+// 설정 로드
+async function loadSettings() {
   try {
-    const result = await chrome.storage.sync.get('layoutSetting');
-    layoutSetting = result.layoutSetting || 'horizontal';
+    const result = await chrome.storage.sync.get(['layoutSetting', 'popupDistance']);
     
-    // 라디오 버튼 체크 상태 설정
+    // 레이아웃 설정 로드
+    layoutSetting = result.layoutSetting || 'horizontal';
     if (layoutSetting === 'horizontal') {
       elements.layoutHorizontal.checked = true;
     } else if (layoutSetting === 'grid') {
       elements.layoutGrid.checked = true;
     }
     
-    console.log('레이아웃 설정 로드 완료:', layoutSetting);
+    // 팝업 거리 설정 로드
+    popupDistance = result.popupDistance || 3;
+    elements.popupDistance.value = popupDistance;
+    elements.popupDistanceValue.textContent = `${popupDistance}px`;
+    
+    console.log('설정 로드 완료:', { layoutSetting, popupDistance });
   } catch (error) {
-    console.error('레이아웃 설정 로드 실패:', error);
+    console.error('설정 로드 실패:', error);
+    // 기본값으로 설정
     layoutSetting = 'horizontal';
+    popupDistance = 3;
     elements.layoutHorizontal.checked = true;
+    elements.popupDistance.value = popupDistance;
+    elements.popupDistanceValue.textContent = `${popupDistance}px`;
   }
 }
 
@@ -717,6 +730,26 @@ async function handleLayoutChange(event) {
   }
 }
 
+// 팝업 거리 설정 변경 처리
+async function handlePopupDistanceChange(event) {
+  const newDistance = parseInt(event.target.value);
+  popupDistance = newDistance;
+  
+  // 실시간으로 표시값 업데이트
+  elements.popupDistanceValue.textContent = `${newDistance}px`;
+  
+  try {
+    // 즉시 저장
+    await chrome.storage.sync.set({ popupDistance: popupDistance });
+    console.log('팝업 거리 설정 저장 완료:', popupDistance);
+    
+    // 모든 탭에 팝업 거리 변경 알림
+    await notifyAllTabsPopupDistanceUpdate();
+  } catch (error) {
+    console.error('팝업 거리 설정 저장 실패:', error);
+  }
+}
+
 // 모든 탭에 레이아웃 업데이트 알림
 async function notifyAllTabsLayoutUpdate() {
   try {
@@ -728,5 +761,19 @@ async function notifyAllTabsLayoutUpdate() {
     console.log('모든 탭 레이아웃 업데이트 알림 완료');
   } catch (error) {
     console.log('탭 레이아웃 업데이트 알림 실패 (정상):', error.message);
+  }
+}
+
+// 모든 탭에 팝업 거리 업데이트 알림
+async function notifyAllTabsPopupDistanceUpdate() {
+  try {
+    await chrome.runtime.sendMessage({ 
+      action: 'notifyAllTabs', 
+      type: 'popupDistanceUpdate',
+      popupDistance: popupDistance 
+    });
+    console.log('모든 탭 팝업 거리 업데이트 알림 완료');
+  } catch (error) {
+    console.log('탭 팝업 거리 업데이트 알림 실패 (정상):', error.message);
   }
 } 

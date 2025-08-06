@@ -234,8 +234,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     
     if (engine && info.selectionText) {
       const searchUrl = engine.url.replace('%s', encodeURIComponent(info.selectionText));
-      // activeTab 권한을 사용하여 새 탭 생성
-      chrome.tabs.create({ url: searchUrl, active: true });
+      // 현재 탭 바로 오른쪽에 새 탭 생성
+      chrome.tabs.create({ 
+        url: searchUrl, 
+        active: true,
+        index: tab.index + 1  // 현재 탭 바로 오른쪽에 생성
+      });
     }
   }
 });
@@ -273,8 +277,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (engine) {
         const searchUrl = engine.url.replace('%s', encodeURIComponent(searchText));
         console.log('최종 검색 URL:', searchUrl);
-        // activeTab 권한을 사용하여 새 탭 생성
-        chrome.tabs.create({ url: searchUrl, active: true }).then(() => {
+        
+        // 현재 탭 바로 오른쪽에 새 탭 생성
+        const currentTab = sender.tab;
+        const tabOptions = { 
+          url: searchUrl, 
+          active: true,
+          index: currentTab.index + 1  // 현재 탭 바로 오른쪽에 생성
+        };
+        
+        chrome.tabs.create(tabOptions).then(() => {
           // 새 탭 생성 성공 후 응답
           sendResponse({ success: true });
         }).catch((error) => {

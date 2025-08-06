@@ -770,7 +770,7 @@ async function notifyAllTabsPopupDistanceUpdate() {
     await chrome.runtime.sendMessage({ 
       action: 'notifyAllTabs', 
       type: 'popupDistanceUpdate',
-      popupDistance: popupDistance 
+      popupDistance: popupDistance
     });
     console.log('모든 탭 팝업 거리 업데이트 알림 완료');
   } catch (error) {

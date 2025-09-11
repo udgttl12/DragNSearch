@@ -1,0 +1,179 @@
+{
+  "extensionName": {
+    "message": "Drag & Drop Search"
+  },
+  "extensionDescription": {
+    "message": "텍스트를 드래그하여 다양한 검색엔진에서 즉시 검색할 수 있는 확장 기능"
+  },
+  "popupTitle": {
+    "message": "🔍 Drag & Drop Search"
+  },
+  "popupSubtitle": {
+    "message": "텍스트를 드래그하여 빠른 검색"
+  },
+  "popupFeature1": {
+    "message": "텍스트를 드래그하면 검색 아이콘이 나타납니다"
+  },
+  "popupFeature2": {
+    "message": "아이콘을 클릭하거나 드래그하여 검색"
+  },
+  "popupFeature3": {
+    "message": "사용자 정의 검색엔진 추가 가능"
+  },
+  "popupFeature4": {
+    "message": "우클릭 메뉴에서도 사용 가능"
+  },
+  "popupSettings": {
+    "message": "⚙️ 설정"
+  },
+  "popupTest": {
+    "message": "🧪 기능 테스트"
+  },
+  "settingsTitle": {
+    "message": "Drag & Drop Search - 설정"
+  },
+  "settingsSubtitle": {
+    "message": "검색엔진 관리 및 설정"
+  },
+  "engineManagement": {
+    "message": "검색엔진 관리"
+  },
+  "engineName": {
+    "message": "검색엔진 이름"
+  },
+  "engineNamePlaceholder": {
+    "message": "예: Google, Naver"
+  },
+  "engineUrl": {
+    "message": "검색 URL"
+  },
+  "engineUrlHelp": {
+    "message": "%s는 검색어로 대체됩니다"
+  },
+  "useExistingIcon": {
+    "message": "기존 검색엔진 아이콘 등록하기"
+  },
+  "useExistingIconHelp": {
+    "message": "체크하면 사이트에서 자동으로 아이콘을 가져옵니다"
+  },
+  "engineIcon": {
+    "message": "아이콘 URL (선택사항)"
+  },
+  "engineIconHelp": {
+    "message": "기존 아이콘을 사용하지 않을 때만 입력하세요"
+  },
+  "addEngine": {
+    "message": "검색엔진 추가"
+  },
+  "addEngineDescription": {
+    "message": "새로운 검색엔진을 등록합니다"
+  },
+  "displaySettings": {
+    "message": "검색엔진 표시 설정"
+  },
+  "layoutSettings": {
+    "message": "드래그 시 검색엔진 배치"
+  },
+  "layoutHorizontal": {
+    "message": "가로 배치"
+  },
+  "layoutHorizontalDesc": {
+    "message": "검색엔진을 한 줄로 가로로 표시합니다"
+  },
+  "layoutGrid": {
+    "message": "그리드 배치"
+  },
+  "layoutGridDesc": {
+    "message": "검색엔진 개수에 따라 자동으로 격자 크기가 조정됩니다"
+  },
+  "layoutGridInfo": {
+    "message": "1-4개: 2x2 • 5-9개: 3x3 • 10-16개: 4x4 • 17-25개: 5x5 • 26개 이상: 6x6"
+  },
+  "popupDistance": {
+    "message": "팝업 표시 거리"
+  },
+  "popupDistanceTitle": {
+    "message": "드래그한 텍스트에서 팝업까지의 거리"
+  },
+  "popupDistanceDesc": {
+    "message": "5픽셀(가까움) ~ 100픽셀(멀리) 사이에서 5픽셀 단위로 조정할 수 있습니다"
+  },
+  "dataManagement": {
+    "message": "데이터 관리"
+  },
+  "backupRestore": {
+    "message": "백업 및 복원"
+  },
+  "exportSettings": {
+    "message": "설정 내보내기 (JSON)"
+  },
+  "importSettings": {
+    "message": "설정 가져오기 (JSON)"
+  },
+  "dataManagementDesc": {
+    "message": "검색엔진 설정을 JSON 파일로 백업하거나 복원할 수 있습니다."
+  },
+  "warningTitle": {
+    "message": "⚠️ 중요 알림"
+  },
+  "warningBackup": {
+    "message": "확장프로그램을 삭제하기 전에 반드시 설정을 백업하세요!"
+  },
+  "warningDesc1": {
+    "message": "확장프로그램을 삭제하면 등록한 모든 검색엔진 정보가 영구적으로 삭제됩니다."
+  },
+  "warningDesc2": {
+    "message": "삭제 전에 위의 \"설정 내보내기\" 버튼을 사용하여 JSON 파일로 백업을 저장하시기 바랍니다."
+  },
+  "warningDesc3": {
+    "message": "백업 후 확장프로그램을 재설치하면 \"설정 가져오기\"로 모든 검색엔진을 복원할 수 있습니다."
+  },
+  "registeredEngines": {
+    "message": "등록된 검색엔진"
+  },
+  "reset": {
+    "message": "기본값으로 초기화"
+  },
+  "save": {
+    "message": "저장"
+  },
+  "cancel": {
+    "message": "취소"
+  },
+  "confirm": {
+    "message": "확인"
+  },
+  "edit": {
+    "message": "편집"
+  },
+  "delete": {
+    "message": "삭제"
+  },
+  "editEngine": {
+    "message": "검색엔진 편집"
+  },
+  "searchWith": {
+    "message": "로 검색"
+  },
+  "searching": {
+    "message": "검색 중..."
+  },
+  "languageSettings": {
+    "message": "언어 설정"
+  },
+  "selectLanguage": {
+    "message": "언어 선택"
+  },
+  "korean": {
+    "message": "한국어"
+  },
+  "english": {
+    "message": "English"
+  },
+  "languageChangeNote": {
+    "message": "언어 변경 후 페이지를 새로고침하면 적용됩니다."
+  },
+  "defaultBadge": {
+    "message": "기본"
+  }
+}

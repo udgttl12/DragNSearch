@@ -1,6 +1,10 @@
 // popup.js - 팝업 페이지의 JavaScript 로직
 
 document.addEventListener('DOMContentLoaded', () => {
+  // i18n 초기화
+  if (window.i18n) {
+    window.i18n.applyI18nToElement();
+  }
   // 설정 버튼 이벤트
   const openOptionsBtn = document.getElementById('openOptions');
   if (openOptionsBtn) {

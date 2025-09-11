@@ -175,7 +175,7 @@ async function createContextMenus() {
       try {
         await chrome.contextMenus.create({
           id: 'dragSearchParent',
-          title: 'Drag & Drop Search',
+          title: chrome.i18n.getMessage('extensionName') || 'Drag & Drop Search',
           contexts: ['selection']
         });
         console.log('부모 메뉴 생성됨');
@@ -191,10 +191,11 @@ async function createContextMenus() {
       // 각 검색엔진별 서브메뉴 추가 (기존 메뉴는 건드리지 않음)
       for (const engine of searchEngines) {
         try {
+          const searchWithText = chrome.i18n.getMessage('searchWith') || '로 검색';
           await chrome.contextMenus.create({
             id: `search_${engine.id}`,
             parentId: 'dragSearchParent',
-            title: `${engine.name}로 검색`,
+            title: `${engine.name}${searchWithText}`,
             contexts: ['selection']
           });
           console.log(`메뉴 추가됨: ${engine.name}`);

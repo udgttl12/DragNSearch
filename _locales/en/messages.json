@@ -1,0 +1,179 @@
+{
+  "extensionName": {
+    "message": "Drag & Drop Search"
+  },
+  "extensionDescription": {
+    "message": "Instant search by dragging text to various search engines"
+  },
+  "popupTitle": {
+    "message": "🔍 Drag & Drop Search"
+  },
+  "popupSubtitle": {
+    "message": "Quick search by dragging text"
+  },
+  "popupFeature1": {
+    "message": "Search icons appear when you drag text"
+  },
+  "popupFeature2": {
+    "message": "Click or drag icons to search"
+  },
+  "popupFeature3": {
+    "message": "Add custom search engines"
+  },
+  "popupFeature4": {
+    "message": "Available in right-click menu"
+  },
+  "popupSettings": {
+    "message": "⚙️ Settings"
+  },
+  "popupTest": {
+    "message": "🧪 Test Feature"
+  },
+  "settingsTitle": {
+    "message": "Drag & Drop Search - Settings"
+  },
+  "settingsSubtitle": {
+    "message": "Search Engine Management & Settings"
+  },
+  "engineManagement": {
+    "message": "Search Engine Management"
+  },
+  "engineName": {
+    "message": "Search Engine Name"
+  },
+  "engineNamePlaceholder": {
+    "message": "e.g., Google, Bing"
+  },
+  "engineUrl": {
+    "message": "Search URL"
+  },
+  "engineUrlHelp": {
+    "message": "%s will be replaced with search term"
+  },
+  "useExistingIcon": {
+    "message": "Use existing search engine icon"
+  },
+  "useExistingIconHelp": {
+    "message": "Automatically fetch icon from the site"
+  },
+  "engineIcon": {
+    "message": "Icon URL (optional)"
+  },
+  "engineIconHelp": {
+    "message": "Only required when not using existing icon"
+  },
+  "addEngine": {
+    "message": "Add Search Engine"
+  },
+  "addEngineDescription": {
+    "message": "Register a new search engine"
+  },
+  "displaySettings": {
+    "message": "Search Engine Display Settings"
+  },
+  "layoutSettings": {
+    "message": "Search Engine Layout on Drag"
+  },
+  "layoutHorizontal": {
+    "message": "Horizontal Layout"
+  },
+  "layoutHorizontalDesc": {
+    "message": "Display search engines in a single row"
+  },
+  "layoutGrid": {
+    "message": "Grid Layout"
+  },
+  "layoutGridDesc": {
+    "message": "Grid size automatically adjusts based on number of engines"
+  },
+  "layoutGridInfo": {
+    "message": "1-4: 2x2 • 5-9: 3x3 • 10-16: 4x4 • 17-25: 5x5 • 26+: 6x6"
+  },
+  "popupDistance": {
+    "message": "Popup Display Distance"
+  },
+  "popupDistanceTitle": {
+    "message": "Distance from dragged text to popup"
+  },
+  "popupDistanceDesc": {
+    "message": "Adjustable from 5px (close) to 100px (far) in 5px increments"
+  },
+  "dataManagement": {
+    "message": "Data Management"
+  },
+  "backupRestore": {
+    "message": "Backup & Restore"
+  },
+  "exportSettings": {
+    "message": "Export Settings (JSON)"
+  },
+  "importSettings": {
+    "message": "Import Settings (JSON)"
+  },
+  "dataManagementDesc": {
+    "message": "Backup or restore search engine settings as JSON files."
+  },
+  "warningTitle": {
+    "message": "⚠️ Important Notice"
+  },
+  "warningBackup": {
+    "message": "Always backup your settings before uninstalling the extension!"
+  },
+  "warningDesc1": {
+    "message": "All registered search engine information will be permanently deleted when uninstalling the extension."
+  },
+  "warningDesc2": {
+    "message": "Please use the \"Export Settings\" button above to save a JSON backup before uninstalling."
+  },
+  "warningDesc3": {
+    "message": "After reinstalling the extension, you can restore all search engines using \"Import Settings\"."
+  },
+  "registeredEngines": {
+    "message": "Registered Search Engines"
+  },
+  "reset": {
+    "message": "Reset to Defaults"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "confirm": {
+    "message": "Confirm"
+  },
+  "edit": {
+    "message": "Edit"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "editEngine": {
+    "message": "Edit Search Engine"
+  },
+  "searchWith": {
+    "message": " Search"
+  },
+  "searching": {
+    "message": "Searching..."
+  },
+  "languageSettings": {
+    "message": "Language Settings"
+  },
+  "selectLanguage": {
+    "message": "Select Language"
+  },
+  "korean": {
+    "message": "한국어"
+  },
+  "english": {
+    "message": "English"
+  },
+  "languageChangeNote": {
+    "message": "Refresh the page after changing language to apply."
+  },
+  "defaultBadge": {
+    "message": "Default"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "manifest_version": 4,
+  "manifest_version": 3,
   "name": "Drag & Drop Search",
   "version": "1.0.7",
   "description": "Search text instantly by dragging and dropping to various search engines",

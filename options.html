@@ -17,72 +17,57 @@
 
     <main class="main-content">
       <section class="section">
-        <h2 data-i18n="engineManagement">검색엔진 관리</h2>
+        <h2>검색엔진 관리</h2>
         <div class="add-engine-form">
           <div class="form-group">
-            <label for="engine-name" data-i18n="engineName">검색엔진 이름</label>
-            <input type="text" id="engine-name" data-i18n-attr='{"placeholder":"engineNamePlaceholder"}' placeholder="예: Google, Naver">
+            <label for="engine-name">검색엔진 이름</label>
+            <input type="text" id="engine-name" placeholder="예: Google, Naver">
           </div>
           <div class="form-group">
-            <label for="engine-url" data-i18n="engineUrl">검색 URL</label>
-            <input type="url" id="engine-url" placeholder="https://www.google.com/search?q=%s" aria-describedby="engine-url-help" required>
-            <small id="engine-url-help" data-i18n="engineUrlHelp">%s는 검색어로 대체됩니다</small>
+            <label for="engine-url">검색 URL</label>
+            <input type="url" id="engine-url" placeholder="https://www.google.com/search?q=%s">
+            <small>%s는 검색어로 대체됩니다</small>
           </div>
           <div class="form-group">
             <div style="display: flex; align-items: center; gap: 6px;">
-              <input type="checkbox" id="use-existing-icon" style="width: fit-content;" aria-describedby="icon-checkbox-help">
-              <label for="use-existing-icon" style="margin-bottom: 0;" data-i18n="useExistingIcon">
+              <input type="checkbox" id="use-existing-icon" style="width: fit-content;">
+              <label for="use-existing-icon" style="margin-bottom: 0;">
                 기존 검색엔진 아이콘 등록하기
               </label>
             </div>
-            <small id="icon-checkbox-help" data-i18n="useExistingIconHelp">체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
+            <small>체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
           </div>
           <div class="form-group" id="icon-url-group">
-            <label for="engine-icon" data-i18n="engineIcon">아이콘 URL (선택사항)</label>
-            <input type="url" id="engine-icon" placeholder="https://example.com/icon.png" aria-describedby="engine-icon-help">
-            <small id="engine-icon-help" data-i18n="engineIconHelp">기존 아이콘을 사용하지 않을 때만 입력하세요</small>
+            <label for="engine-icon">아이콘 URL (선택사항)</label>
+            <input type="url" id="engine-icon" placeholder="https://example.com/icon.png">
+            <small>기존 아이콘을 사용하지 않을 때만 입력하세요</small>
           </div>
-          <button type="button" id="add-engine-btn" class="btn btn-primary" aria-describedby="add-engine-description">
+          <button type="button" id="add-engine-btn" class="btn btn-primary">
             <span class="btn-icon">➕</span>
-            <span data-i18n="addEngine">검색엔진 추가</span>
+            검색엔진 추가
           </button>
-          <div id="add-engine-description" class="sr-only" data-i18n="addEngineDescription">새로운 검색엔진을 등록합니다</div>
         </div>
       </section>
 
-      <section class="section" aria-labelledby="language-settings-heading">
-        <h2 id="language-settings-heading" data-i18n="languageSettings">언어 설정</h2>
-        <div class="language-settings">
-          <div class="setting-group">
-            <h3 data-i18n="selectLanguage">언어 선택</h3>
-            <select id="language-select" class="language-select">
-              <option value="ko" data-i18n="korean">한국어</option>
-              <option value="en" data-i18n="english">English</option>
-            </select>
-            <p class="language-note" data-i18n="languageChangeNote">언어 변경 후 페이지를 새로고침하면 적용됩니다.</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" aria-labelledby="display-settings-heading">
-        <h2 id="display-settings-heading" data-i18n="displaySettings">검색엔진 표시 설정</h2>
+      <section class="section">
+        <h2>검색엔진 표시 설정</h2>
         <div class="display-settings">
           <div class="setting-group">
-            <h3 data-i18n="layoutSettings">드래그 시 검색엔진 배치</h3>
+            <h3>드래그 시 검색엔진 배치</h3>
             <div class="radio-group">
               <label class="radio-option">
-                <input type="radio" name="layout" value="horizontal" id="layout-horizontal" aria-describedby="horizontal-description">
+                <input type="radio" name="layout" value="horizontal" id="layout-horizontal">
                 <span class="radio-label">
-                  <span class="radio-title" data-i18n="layoutHorizontal">가로 배치</span>
-                  <span class="radio-description" data-i18n="layoutHorizontalDesc">검색엔진을 한 줄로 가로로 표시합니다</span>
+                  <span class="radio-title">가로 배치</span>
+                  <span class="radio-description">검색엔진을 한 줄로 가로로 표시합니다</span>
                 </span>
               </label>
               <label class="radio-option">
-                <input type="radio" name="layout" value="grid" id="layout-grid" aria-describedby="grid-description">
+                <input type="radio" name="layout" value="grid" id="layout-grid">
                 <span class="radio-label">
-                  <span class="radio-title" data-i18n="layoutGrid">그리드 배치</span>
-                  <span class="radio-description" data-i18n="layoutGridDesc">검색엔진 개수에 따라 자동으로 격자 크기가 조정됩니다<br>
-                    <small style="opacity: 0.8; margin-top: 2px; display: block;" data-i18n="layoutGridInfo">
+                  <span class="radio-title">그리드 배치</span>
+                  <span class="radio-description">검색엔진 개수에 따라 자동으로 격자 크기가 조정됩니다<br>
+                    <small style="opacity: 0.8; margin-top: 2px; display: block;">
                       1-4개: 2x2 • 5-9개: 3x3 • 10-16개: 4x4 • 17-25개: 5x5 • 26개 이상: 6x6
                     </small>
                   </span>
@@ -92,10 +77,10 @@
           </div>
           
           <div class="setting-group">
-            <h3 data-i18n="popupDistance">팝업 표시 거리</h3>
+            <h3>팝업 표시 거리</h3>
             <div class="range-group">
               <label for="popup-distance" class="range-label">
-                <span class="range-title" data-i18n="popupDistanceTitle">드래그한 텍스트에서 팝업까지의 거리</span>
+                <span class="range-title">드래그한 텍스트에서 팝업까지의 거리</span>
                 <span class="range-description">5픽셀(가까움) ~ 100픽셀(멀리) 사이에서 5픽셀 단위로 조정할 수 있습니다</span>
               </label>
               <div class="range-input-group">
@@ -211,7 +196,6 @@
     </div>
   </div>
 
-  <script src="js/i18n.js"></script>
   <script src="options.js"></script>
 </body>
 </html> 

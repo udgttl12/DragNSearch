@@ -1,9 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "__MSG_extensionName__",
-  "version": "1.0.7",
-  "description": "__MSG_extensionDescription__",
-  "default_locale": "ko",
+  "name": "Drag & Drop Search",
+  "version": "1.0.6",
+  "description": "텍스트를 드래그하여 다양한 검색엔진에서 즉시 검색할 수 있는 확장 기능",
   "permissions": [
     "storage",
     "contextMenus",
@@ -18,7 +17,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["js/i18n.js", "content.js"],
+      "js": ["content.js"],
       "css": ["content.css"],
       "run_at": "document_end"
     }
@@ -26,7 +25,7 @@
   "options_page": "options.html",
   "action": {
     "default_popup": "popup.html",
-    "default_title": "__MSG_extensionName__"
+    "default_title": "Drag & Drop Search"
   },
   "icons": {
     "16": "icons/store.png",

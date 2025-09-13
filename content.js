@@ -176,19 +176,8 @@ function createPopup() {
   searchEngines.forEach(engine => {
     const iconElement = document.createElement('div');
     iconElement.className = 'search-engine-icon';
-    // i18n 지원 텍스트 생성
-    const searchTexts = window.i18n ? window.i18n.getSearchTexts(engine.name) : {
-      searchWith: `${engine.name}로 검색`,
-      searching: `${engine.name} 검색 중...`
-    };
-    
-    iconElement.title = searchTexts.searchWith;
+    iconElement.title = `${engine.name}로 검색`;
     iconElement.dataset.engineId = engine.id;
-    
-    // 접근성 속성 추가
-    iconElement.setAttribute('role', 'button');
-    iconElement.setAttribute('aria-label', searchTexts.searchWith);
-    iconElement.setAttribute('tabindex', '0');
     
     const imgElement = document.createElement('img');
     imgElement.src = engine.icon;
@@ -204,33 +193,6 @@ function createPopup() {
       e.stopPropagation();
       performSearch(engine.id, selectedText);
       hidePopup();
-    });
-    
-    // 키보드 이벤트 (접근성)
-    iconElement.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        e.stopPropagation();
-        performSearch(engine.id, selectedText);
-        hidePopup();
-      }
-    });
-    
-    // 터치 이벤트 (모바일 지원)
-    iconElement.addEventListener('touchstart', (e) => {
-      e.preventDefault(); // 스크롤 방지
-      iconElement.classList.add('touch-active');
-    });
-    
-    iconElement.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      iconElement.classList.remove('touch-active');
-      performSearch(engine.id, selectedText);
-      hidePopup();
-    });
-    
-    iconElement.addEventListener('touchcancel', (e) => {
-      iconElement.classList.remove('touch-active');
     });
     
     // 드래그 오버 이벤트 (드래그&드롭을 위해)
@@ -297,48 +259,6 @@ function hidePopup() {
   }
 }
 
-// 로딩 상태 표시
-function showLoadingState(engineId) {
-  if (!popupElement) return;
-  
-  const targetIcon = popupElement.querySelector(`[data-engine-id="${engineId}"]`);
-  if (targetIcon) {
-    targetIcon.classList.add('loading');
-    targetIcon.setAttribute('aria-busy', 'true');
-    
-    // 검색 중 텍스트를 i18n으로 처리
-    const engineName = targetIcon.querySelector('img')?.alt || 'Engine';
-    const searchingText = window.i18n ? 
-      window.i18n.getSearchTexts(engineName).searching : 
-      `${engineName} 검색 중...`;
-    targetIcon.setAttribute('aria-label', searchingText);
-  }
-}
-
-// 로딩 상태 해제
-function hideLoadingState(engineId) {
-  if (!popupElement) return;
-  
-  const targetIcon = popupElement.querySelector(`[data-engine-id="${engineId}"]`);
-  if (targetIcon) {
-    targetIcon.classList.remove('loading');
-    targetIcon.removeAttribute('aria-busy');
-    targetIcon.setAttribute('aria-label', targetIcon.title);
-  }
-}
-
-// 모든 로딩 상태 해제
-function hideAllLoadingStates() {
-  if (!popupElement) return;
-  
-  const loadingIcons = popupElement.querySelectorAll('.loading');
-  loadingIcons.forEach(icon => {
-    icon.classList.remove('loading');
-    icon.removeAttribute('aria-busy');
-    icon.setAttribute('aria-label', icon.title);
-  });
-}
-
 // 검색 실행
 function performSearch(engineId, text) {
   console.log('검색 실행:', engineId, text);
@@ -351,14 +271,10 @@ function performSearch(engineId, text) {
   
   isSearching = true;
   
-  // 로딩 상태 표시
-  showLoadingState(engineId);
-  
   // Chrome extension context 유효성 검사
   if (!chrome || !chrome.runtime || !chrome.runtime.sendMessage) {
     console.log('Chrome extension context가 유효하지 않음');
     handleExtensionDisconnected(engineId, text);
-    hideLoadingState(engineId);
     isSearching = false;
     return;
   }
@@ -369,14 +285,12 @@ function performSearch(engineId, text) {
     if (!extensionId) {
       console.log('Extension ID를 가져올 수 없음 - context 무효');
       handleExtensionDisconnected(engineId, text);
-      hideLoadingState(engineId);
       isSearching = false;
       return;
     }
   } catch (error) {
     console.log('Extension context 검사 실패:', error.message);
     handleExtensionDisconnected(engineId, text);
-    hideLoadingState(engineId);
     isSearching = false;
     return;
   }
@@ -420,15 +334,13 @@ function performSearch(engineId, text) {
   sendMessagePromise()
     .then((response) => {
       console.log('검색 완료:', response);
-      // 검색 완료 - 로딩 상태 및 플래그 해제
-      hideLoadingState(engineId);
+      // 성공 시에는 아무것도 하지 않음 (background script에서 새 탭 생성)
       isSearching = false;
     })
     .catch((error) => {
       console.error('검색 실패, 대안 실행:', error);
       // 실패 시에만 대안 실행
       handleExtensionDisconnected(engineId, text);
-      hideLoadingState(engineId);
       isSearching = false;
     });
 }

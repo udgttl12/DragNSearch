@@ -1,19 +1,22 @@
+@import url('./design-tokens.css');
+
 /* 팝업 컨테이너 */
 .drag-search-popup {
   position: fixed;
-  z-index: 2147483647; /* 최상위 레이어 */
+  z-index: var(--z-max);
   display: none;
-  gap: 8px;
-  padding: 8px;
+  gap: var(--space-2);
+  padding: var(--space-2);
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  animation: fadeInUp 0.2s ease-out;
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popup);
+  animation: fadeInUp var(--transition-base) ease-out;
   pointer-events: all;
   user-select: none;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  will-change: transform, opacity;
 }
 
 /* 가로 배치 레이아웃 */
@@ -27,10 +30,10 @@
   display: grid;
   grid-template-columns: repeat(var(--grid-columns, 3), 1fr);
   grid-template-rows: repeat(var(--grid-rows, 3), 1fr);
-  width: calc(var(--grid-size, 3) * 40px);
-  height: calc(var(--grid-size, 3) * 40px);
-  gap: 6px;
-  padding: 6px;
+  width: calc(var(--grid-size, 3) * var(--grid-item-size));
+  height: calc(var(--grid-size, 3) * var(--grid-item-size));
+  gap: var(--grid-gap);
+  padding: var(--grid-gap);
 }
 
 /* 팝업 등장 애니메이션 */
@@ -50,63 +53,108 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: var(--icon-size-xl);
+  height: var(--icon-size-xl);
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  border-radius: var(--radius-base);
   background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-gray-200);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-all);
   position: relative;
   overflow: hidden;
+  will-change: transform, background-color, border-color, box-shadow;
 }
 
 .search-engine-icon:hover {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: rgba(59, 130, 246, 0.3);
+  background: var(--color-primary-alpha);
+  border-color: var(--color-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-lg);
 }
 
 .search-engine-icon:active {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
+}
+
+.search-engine-icon:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* 드래그 호버 상태 */
 .search-engine-icon.drag-hover {
-  background: rgba(34, 197, 94, 0.1);
-  border-color: rgba(34, 197, 94, 0.3);
+  background: var(--color-success-alpha);
+  border-color: var(--color-success);
   transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.2);
+  box-shadow: var(--shadow-xl);
+}
+
+/* 터치 활성 상태 */
+.search-engine-icon.touch-active {
+  background: var(--color-primary-alpha);
+  border-color: var(--color-primary);
+  transform: scale(0.95);
+  box-shadow: var(--shadow-md);
+}
+
+/* 로딩 상태 */
+.search-engine-icon.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.search-engine-icon.loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--icon-size-base);
+  height: var(--icon-size-base);
+  margin: calc(var(--icon-size-base) / -2) 0 0 calc(var(--icon-size-base) / -2);
+  border: 2px solid var(--color-gray-300);
+  border-top-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  animation: spin 1s linear infinite;
+  z-index: var(--z-base);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 아이콘 이미지 */
 .search-engine-icon img {
-  width: 20px;
-  height: 20px;
+  width: var(--icon-size-base);
+  height: var(--icon-size-base);
   object-fit: contain;
   pointer-events: none;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(var(--shadow-sm));
+  transition: var(--transition-fast);
 }
 
 /* 툴팁 스타일 개선 */
 .search-engine-icon::after {
   content: attr(title);
   position: absolute;
-  bottom: -32px;
+  bottom: calc(-1 * var(--space-8));
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  background: var(--color-gray-900);
+  color: var(--color-white);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 1000;
+  transition: var(--transition-base);
+  z-index: var(--z-tooltip);
+  box-shadow: var(--shadow-md);
 }
 
 .search-engine-icon:hover::after {
@@ -117,93 +165,110 @@
 @media (prefers-color-scheme: dark) {
   .drag-search-popup {
     background: rgba(31, 41, 55, 0.95);
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-gray-700);
   }
   
   .search-engine-icon {
     background: rgba(55, 65, 81, 0.8);
-    border-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--color-gray-600);
   }
   
   .search-engine-icon:hover {
-    background: rgba(59, 130, 246, 0.2);
-    border-color: rgba(59, 130, 246, 0.4);
+    background: var(--color-primary-alpha);
+    border-color: var(--color-primary);
   }
   
   .search-engine-icon.drag-hover {
-    background: rgba(34, 197, 94, 0.2);
-    border-color: rgba(34, 197, 94, 0.4);
+    background: var(--color-success-alpha);
+    border-color: var(--color-success);
+  }
+  
+  .search-engine-icon::after {
+    background: var(--color-gray-100);
+    color: var(--color-gray-900);
   }
 }
 
 /* 격자 레이아웃에서의 아이콘 크기 조정 */
 .drag-search-popup.grid-layout .search-engine-icon {
-  width: calc(40px - 6px);
-  height: calc(40px - 6px);
+  width: calc(var(--grid-item-size) - var(--grid-gap));
+  height: calc(var(--grid-item-size) - var(--grid-gap));
+  min-width: calc(var(--grid-item-size) - var(--grid-gap));
+  min-height: calc(var(--grid-item-size) - var(--grid-gap));
 }
 
 .drag-search-popup.grid-layout .search-engine-icon img {
-  width: calc(40px - 22px);
-  height: calc(40px - 22px);
+  width: calc(var(--grid-item-size) - var(--space-5));
+  height: calc(var(--grid-item-size) - var(--space-5));
 }
 
 /* 격자 레이아웃에서 툴팁 위치 조정 */
 .drag-search-popup.grid-layout .search-engine-icon::after {
-  bottom: -28px;
-  font-size: 11px;
-  padding: 3px 6px;
+  bottom: calc(-1 * var(--space-7, 1.75rem));
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-2);
 }
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .drag-search-popup.horizontal-layout {
-    gap: 6px;
-    padding: 6px;
+    gap: var(--space-1);
+    padding: var(--space-1);
   }
   
   .drag-search-popup.horizontal-layout .search-engine-icon {
-    width: 32px;
-    height: 32px;
+    width: var(--icon-size-xl);
+    height: var(--icon-size-xl);
+    min-width: var(--touch-target-min);
+    min-height: var(--touch-target-min);
   }
   
   .drag-search-popup.horizontal-layout .search-engine-icon img {
-    width: 18px;
-    height: 18px;
+    width: var(--icon-size-sm);
+    height: var(--icon-size-sm);
   }
   
   .drag-search-popup.grid-layout {
-    width: calc(var(--grid-size, 3) * 36px);
-    height: calc(var(--grid-size, 3) * 36px);
-    gap: 4px;
-    padding: 4px;
+    --mobile-grid-size: 36px;
+    width: calc(var(--grid-size, 3) * var(--mobile-grid-size));
+    height: calc(var(--grid-size, 3) * var(--mobile-grid-size));
+    gap: var(--space-1);
+    padding: var(--space-1);
   }
   
   .drag-search-popup.grid-layout .search-engine-icon {
-    width: calc(36px - 4px);
-    height: calc(36px - 4px);
+    width: calc(var(--mobile-grid-size) - var(--space-1));
+    height: calc(var(--mobile-grid-size) - var(--space-1));
+    min-width: calc(var(--mobile-grid-size) - var(--space-1));
+    min-height: calc(var(--mobile-grid-size) - var(--space-1));
   }
   
   .drag-search-popup.grid-layout .search-engine-icon img {
-    width: calc(36px - 18px);
-    height: calc(36px - 18px);
+    width: calc(var(--mobile-grid-size) - var(--space-4));
+    height: calc(var(--mobile-grid-size) - var(--space-4));
   }
 }
 
 /* 고대비 모드 대응 */
 @media (prefers-contrast: high) {
   .drag-search-popup {
-    background: white;
-    border: 2px solid black;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: var(--color-white);
+    border: 2px solid var(--color-gray-900);
+    box-shadow: var(--shadow-lg);
   }
   
   .search-engine-icon {
-    background: white;
-    border: 1px solid black;
+    background: var(--color-white);
+    border: 2px solid var(--color-gray-900);
   }
   
   .search-engine-icon:hover {
-    background: #e5e7eb;
+    background: var(--color-gray-200);
+  }
+  
+  .search-engine-icon:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
   }
 }
 
@@ -214,10 +279,21 @@
   }
   
   .search-engine-icon {
-    transition: none;
+    transition: var(--transition-colors);
+    will-change: auto;
   }
   
   .search-engine-icon:hover {
     transform: none;
+  }
+  
+  .search-engine-icon.loading::before {
+    animation: none;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: none;
+    }
   }
 } 

@@ -3,9 +3,45 @@ let searchEngines = [];
 let editingEngineId = null;
 let layoutSetting = 'horizontal'; // 기본값: 가로 배치
 let popupDistance = 15; // 기본값: 15픽셀
+let currentLanguage = 'en'; // 기본값: 영어
+
+// i18n 관련 함수들
+async function getTranslation(key) {
+  const currentLang = await getCurrentLanguage();
+  return getMessage(key, currentLang);
+}
+
+function updateElementText(element, messageKey) {
+  if (element) {
+    getTranslation(messageKey).then(text => {
+      element.textContent = text;
+    });
+  }
+}
+
+async function updateElementsWithI18n() {
+  const currentLang = await getCurrentLanguage();
+
+  const elementsWithI18n = document.querySelectorAll('[data-i18n]');
+  elementsWithI18n.forEach(element => {
+    const messageKey = element.getAttribute('data-i18n');
+    element.textContent = getMessage(messageKey, currentLang);
+  });
+
+  // 플레이스홀더 업데이트
+  const elementsWithI18nPlaceholder = document.querySelectorAll('[data-i18n-placeholder]');
+  elementsWithI18nPlaceholder.forEach(element => {
+    const messageKey = element.getAttribute('data-i18n-placeholder');
+    element.placeholder = getMessage(messageKey, currentLang);
+  });
+}
 
 // DOM 요소들
 const elements = {
+  // 언어 설정 요소들
+  languageSelect: document.getElementById('language-select'),
+
+  // 검색엔진 관리 요소들
   engineName: document.getElementById('engine-name'),
   engineUrl: document.getElementById('engine-url'),
   engineIcon: document.getElementById('engine-icon'),
@@ -77,23 +113,29 @@ const DEFAULT_SEARCH_ENGINES = [
 ];
 
 // 초기화
-document.addEventListener('DOMContentLoaded', () => {
-  loadSearchEngines();
-  loadSettings();
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadSearchEngines();
+  await loadSettings();
+  await loadLanguageSettings();
+  await updateElementsWithI18n();
   initEventListeners();
 });
 
 // 이벤트 리스너 초기화
 function initEventListeners() {
+  // 언어 설정 이벤트
+  elements.languageSelect.addEventListener('change', handleLanguageChange);
+
+  // 검색엔진 관리 이벤트
   elements.addEngineBtn.addEventListener('click', handleAddEngine);
   elements.resetBtn.addEventListener('click', handleReset);
   elements.saveBtn.addEventListener('click', handleSave);
-  
+
   // 표시 설정 이벤트
   elements.layoutHorizontal.addEventListener('change', handleLayoutChange);
   elements.layoutGrid.addEventListener('change', handleLayoutChange);
   elements.popupDistance.addEventListener('input', handlePopupDistanceChange);
-  
+
   // 데이터 관리 이벤트
   elements.exportBtn.addEventListener('click', handleExport);
   elements.importBtn.addEventListener('click', () => elements.importFile.click());
@@ -156,37 +198,46 @@ async function loadSearchEngines() {
     console.log('저장소에서 로드된 데이터:', result);
     searchEngines = result.searchEngines || DEFAULT_SEARCH_ENGINES;
     console.log('최종 검색엔진 목록:', searchEngines);
-    renderEnginesList();
+    await renderEnginesList();
   } catch (error) {
     console.error('검색엔진 로드 실패:', error);
     searchEngines = DEFAULT_SEARCH_ENGINES;
-    renderEnginesList();
+    await renderEnginesList();
   }
 }
 
 // 검색엔진 목록 렌더링
-function renderEnginesList() {
+async function renderEnginesList() {
   console.log('렌더링 시작, 검색엔진 수:', searchEngines.length);
   elements.enginesList.innerHTML = '';
-  
+
   if (searchEngines.length === 0) {
-    elements.enginesList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 2rem;">등록된 검색엔진이 없습니다.</p>';
+    const currentLang = await getCurrentLanguage();
+    const noEnginesText = getMessage('noEnginesMessage', currentLang);
+    elements.enginesList.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 2rem;">${noEnginesText}</p>`;
     return;
   }
-  
-  searchEngines.forEach(engine => {
+
+  for (const engine of searchEngines) {
     console.log('렌더링 엔진:', engine.name);
-    const engineElement = createEngineElement(engine);
+    const engineElement = await createEngineElement(engine);
     elements.enginesList.appendChild(engineElement);
-  });
+  }
   console.log('렌더링 완료');
 }
 
 // 검색엔진 요소 생성
-function createEngineElement(engine) {
+async function createEngineElement(engine) {
   const div = document.createElement('div');
   div.className = 'engine-item';
-  
+
+  // 현재 언어 가져오기
+  const currentLang = await getCurrentLanguage();
+  const editText = getMessage('editButton', currentLang);
+  const deleteText = getMessage('deleteButton', currentLang);
+  const requiredText = getMessage('requiredBadge', currentLang);
+  const defaultText = getMessage('defaultBadge', currentLang);
+
   div.innerHTML = `
     <div class="engine-icon">
       <img src="${engine.icon}" alt="${engine.name}" onerror="this.style.display='none'">
@@ -194,19 +245,19 @@ function createEngineElement(engine) {
     <div class="engine-info">
       <div class="engine-name">
         ${engine.name}
-        ${engine.id === 'google' ? '<span class="default-badge" style="background: #ef4444; color: white;">필수</span>' : ''}
-        ${engine.isDefault && engine.id !== 'google' ? '<span class="default-badge">기본</span>' : ''}
+        ${engine.id === 'google' ? `<span class="default-badge" style="background: #ef4444; color: white;">${requiredText}</span>` : ''}
+        ${engine.isDefault && engine.id !== 'google' ? `<span class="default-badge">${defaultText}</span>` : ''}
       </div>
       <div class="engine-url">${engine.url}</div>
     </div>
     <div class="engine-actions">
       <button class="btn btn-secondary btn-small edit-btn" data-engine-id="${engine.id}">
-        ✏️ 편집
+        ✏️ ${editText}
       </button>
-      ${engine.id !== 'google' ? `<button class="btn btn-danger btn-small delete-btn" data-engine-id="${engine.id}">🗑️ 삭제</button>` : ''}
+      ${engine.id !== 'google' ? `<button class="btn btn-danger btn-small delete-btn" data-engine-id="${engine.id}">🗑️ ${deleteText}</button>` : ''}
     </div>
   `;
-  
+
   return div;
 }
 
@@ -304,23 +355,23 @@ function handleAddEngine() {
   const icon = elements.engineIcon.value.trim();
   
   if (!name || !url) {
-    showStatus('검색엔진 이름과 URL을 입력해주세요.', 'error');
+    showStatus(getMessage('errorEmptyName'), 'error');
     return;
   }
   
   if (!url.includes('%s')) {
-    showStatus('검색 URL에 %s를 포함해주세요.', 'error');
+    showStatus(getMessage('errorMissingPlaceholder'), 'error');
     return;
   }
   
   if (!isValidUrl(url.replace('%s', 'test'))) {
-    showStatus('올바른 URL 형식을 입력해주세요.', 'error');
+    showStatus(getMessage('errorInvalidUrl'), 'error');
     return;
   }
   
   // 중복 이름 확인
   if (searchEngines.some(engine => engine.name.toLowerCase() === name.toLowerCase())) {
-    showStatus('이미 존재하는 검색엔진 이름입니다.', 'error');
+    showStatus(getMessage('errorEmptyName'), 'error');
     return;
   }
   
@@ -335,10 +386,10 @@ function handleAddEngine() {
   searchEngines.push(newEngine);
   
   // 즉시 저장소에 저장
-  chrome.storage.sync.set({ searchEngines: searchEngines }).then(() => {
-    renderEnginesList();
+  chrome.storage.sync.set({ searchEngines: searchEngines }).then(async () => {
+    await renderEnginesList();
     clearForm();
-    showStatus('검색엔진이 추가되었습니다.', 'success');
+    showStatus(getMessage('engineAdded'), 'success');
     
     // 모든 탭에 업데이트 알림
     notifyAllTabsUpdate();
@@ -346,7 +397,7 @@ function handleAddEngine() {
     console.error('추가 저장 실패:', error);
     // 실패 시 배열에서 제거
     searchEngines.pop();
-    showStatus('검색엔진 추가에 실패했습니다.', 'error');
+    showStatus(getMessage('errorInvalidUrl'), 'error');
   });
 }
 
@@ -381,23 +432,23 @@ function handleEditSave() {
   const icon = elements.editEngineIcon.value.trim();
   
   if (!name || !url) {
-    showStatus('검색엔진 이름과 URL을 입력해주세요.', 'error');
+    showStatus(getMessage('errorEmptyName'), 'error');
     return;
   }
   
   if (!url.includes('%s')) {
-    showStatus('검색 URL에 %s를 포함해주세요.', 'error');
+    showStatus(getMessage('errorMissingPlaceholder'), 'error');
     return;
   }
   
   if (!isValidUrl(url.replace('%s', 'test'))) {
-    showStatus('올바른 URL 형식을 입력해주세요.', 'error');
+    showStatus(getMessage('errorInvalidUrl'), 'error');
     return;
   }
   
   // 중복 이름 확인 (자기 자신 제외)
   if (searchEngines.some(engine => engine.id !== editingEngineId && engine.name.toLowerCase() === name.toLowerCase())) {
-    showStatus('이미 존재하는 검색엔진 이름입니다.', 'error');
+    showStatus(getMessage('errorEmptyName'), 'error');
     return;
   }
   
@@ -412,10 +463,10 @@ function handleEditSave() {
     };
     
     // 즉시 저장소에 저장
-    chrome.storage.sync.set({ searchEngines: searchEngines }).then(() => {
-      renderEnginesList();
+    chrome.storage.sync.set({ searchEngines: searchEngines }).then(async () => {
+      await renderEnginesList();
       hideEditModal();
-      showStatus('검색엔진이 수정되었습니다.', 'success');
+      showStatus(getMessage('engineUpdated'), 'success');
       
       // 모든 탭에 업데이트 알림
       notifyAllTabsUpdate();
@@ -423,7 +474,7 @@ function handleEditSave() {
       console.error('편집 저장 실패:', error);
       // 실패 시 원래 상태로 복원
       searchEngines[engineIndex] = originalEngine;
-      showStatus('검색엔진 수정에 실패했습니다.', 'error');
+      showStatus(getMessage('errorInvalidUrl'), 'error');
     });
   }
 }
@@ -432,12 +483,13 @@ function handleEditSave() {
 let currentConfirmAction = null;
 
 // 검색엔진 삭제
-function deleteEngine(engineId) {
+async function deleteEngine(engineId) {
   const engine = searchEngines.find(e => e.id === engineId);
   if (!engine) return;
-  
-  elements.confirmMessage.textContent = `"${engine.name}" 검색엔진을 삭제하시겠습니까?`;
-  
+
+  const confirmText = await getTranslation('confirmDelete');
+  elements.confirmMessage.textContent = confirmText;
+
   // 현재 확인 액션 설정
   currentConfirmAction = async () => {
     console.log('삭제 시작:', engineId);
@@ -447,15 +499,15 @@ function deleteEngine(engineId) {
       // 즉시 저장소에 저장
       await chrome.storage.sync.set({ searchEngines: searchEngines });
       console.log('삭제 저장 완료');
-      renderEnginesList();
+      await renderEnginesList();
       hideConfirmModal();
-      showStatus('검색엔진이 삭제되었습니다.', 'success');
+      showStatus(getMessage('engineDeleted'), 'success');
       
       // 모든 탭에 업데이트 알림
       notifyAllTabsUpdate();
     } catch (error) {
       console.error('삭제 저장 실패:', error);
-      showStatus('삭제에 실패했습니다.', 'error');
+      showStatus(getMessage('errorInvalidUrl'), 'error');
     }
   };
   
@@ -463,9 +515,10 @@ function deleteEngine(engineId) {
 }
 
 // 초기화
-function handleReset() {
-  elements.confirmMessage.textContent = '모든 설정을 기본값으로 초기화하시겠습니까?';
-  
+async function handleReset() {
+  const confirmText = await getTranslation('confirmReset');
+  elements.confirmMessage.textContent = confirmText;
+
   // 현재 확인 액션 설정
   currentConfirmAction = async () => {
     console.log('초기화 시작');
@@ -475,15 +528,15 @@ function handleReset() {
       // 즉시 저장소에 저장
       await chrome.storage.sync.set({ searchEngines: searchEngines });
       console.log('초기화 저장 완료');
-      renderEnginesList();
+      await renderEnginesList();
       hideConfirmModal();
-      showStatus('설정이 초기화되었습니다.', 'success');
+      showStatus(getMessage('resetCompleted'), 'success');
       
       // 모든 탭에 업데이트 알림
       notifyAllTabsUpdate();
     } catch (error) {
       console.error('초기화 저장 실패:', error);
-      showStatus('초기화에 실패했습니다.', 'error');
+      showStatus(getMessage('errorInvalidUrl'), 'error');
     }
   };
   
@@ -501,14 +554,14 @@ async function handleSave() {
     // 설정 저장 후 메뉴 생성 요청
     try {
       await chrome.runtime.sendMessage({ action: 'createMenus' });
-      showStatus('설정이 저장되었습니다. 컨텍스트 메뉴가 업데이트되었습니다.', 'success');
+      showStatus(getMessage('settingsSaved'), 'success');
     } catch (error) {
       console.error('메뉴 생성 요청 실패:', error);
-      showStatus('설정이 저장되었습니다. 컨텍스트 메뉴는 수동으로 설정해주세요.', 'success');
+      showStatus(getMessage('settingsSaved'), 'success');
     }
   } catch (error) {
     console.error('저장 실패:', error);
-    showStatus('저장에 실패했습니다.', 'error');
+    showStatus(getMessage('errorInvalidUrl'), 'error');
   }
 }
 
@@ -538,14 +591,6 @@ function clearForm() {
   elements.iconUrlGroup.style.display = 'block';
 }
 
-function showStatus(message, type) {
-  elements.statusMessage.textContent = message;
-  elements.statusMessage.className = `status-message ${type}`;
-  
-  setTimeout(() => {
-    elements.statusMessage.className = 'status-message';
-  }, 3000);
-}
 
 // 모달 관리
 function showConfirmModal() {
@@ -595,10 +640,10 @@ function handleExport() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    showStatus(`설정이 ${filename} 파일로 내보내졌습니다.`, 'success');
+    showStatus(getMessage('settingsExported'), 'success');
   } catch (error) {
     console.error('내보내기 실패:', error);
-    showStatus('설정 내보내기에 실패했습니다.', 'error');
+    showStatus(getMessage('errorInvalidUrl'), 'error');
   }
 }
 
@@ -608,7 +653,7 @@ function handleImport(event) {
   if (!file) return;
   
   if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-    showStatus('JSON 파일만 가져올 수 있습니다.', 'error');
+    showStatus(getMessage('errorInvalidUrl'), 'error');
     return;
   }
   
@@ -619,7 +664,7 @@ function handleImport(event) {
       
       // 데이터 유효성 검사 - 배열인지 확인
       if (!Array.isArray(importData)) {
-        showStatus('유효하지 않은 설정 파일입니다. 검색엔진 배열이어야 합니다.', 'error');
+        showStatus(getMessage('errorInvalidUrl'), 'error');
         return;
       }
       
@@ -629,7 +674,7 @@ function handleImport(event) {
       });
       
       if (validEngines.length === 0) {
-        showStatus('가져올 수 있는 유효한 검색엔진이 없습니다.', 'error');
+        showStatus(getMessage('errorInvalidUrl'), 'error');
         return;
       }
       
@@ -646,24 +691,22 @@ function handleImport(event) {
       }
       
       // 확인 모달 표시
-      elements.confirmMessage.innerHTML = `
-        <strong>${validEngines.length}개의 검색엔진</strong>을 가져오시겠습니까?<br>
-        <small style="color: #6b7280;">현재 설정이 대체됩니다.</small>
-      `;
+      const confirmMessage = await getTranslation('confirmImport');
+      elements.confirmMessage.textContent = confirmMessage.replace('{count}', validEngines.length);
       
       currentConfirmAction = async () => {
         try {
           searchEngines = validEngines;
           await chrome.storage.sync.set({ searchEngines: searchEngines });
-          renderEnginesList();
+          await renderEnginesList();
           hideConfirmModal();
-          showStatus(`${validEngines.length}개의 검색엔진을 성공적으로 가져왔습니다.`, 'success');
+          showStatus(getMessage('settingsImported'), 'success');
           
           // 모든 탭에 업데이트 알림
           notifyAllTabsUpdate();
         } catch (error) {
           console.error('가져오기 저장 실패:', error);
-          showStatus('설정 가져오기에 실패했습니다.', 'error');
+          showStatus(getMessage('errorInvalidUrl'), 'error');
         }
       };
       
@@ -671,7 +714,7 @@ function handleImport(event) {
       
     } catch (error) {
       console.error('파일 읽기 실패:', error);
-      showStatus('파일을 읽을 수 없습니다. 올바른 JSON 파일인지 확인해주세요.', 'error');
+      showStatus(getMessage('errorInvalidUrl'), 'error');
     }
   };
   
@@ -723,10 +766,10 @@ async function handleLayoutChange(event) {
     // 모든 탭에 레이아웃 변경 알림
     await notifyAllTabsLayoutUpdate();
     
-    showStatus('표시 설정이 저장되었습니다.', 'success');
+    showStatus(getMessage('settingsSaved'), 'success');
   } catch (error) {
     console.error('레이아웃 설정 저장 실패:', error);
-    showStatus('설정 저장에 실패했습니다.', 'error');
+    showStatus(getMessage('errorInvalidUrl'), 'error');
   }
 }
 
@@ -776,4 +819,76 @@ async function notifyAllTabsPopupDistanceUpdate() {
   } catch (error) {
     console.log('탭 팝업 거리 업데이트 알림 실패 (정상):', error.message);
   }
+}
+
+// 언어 설정 로드
+async function loadLanguageSettings() {
+  try {
+    const result = await chrome.storage.sync.get(['selectedLanguage']);
+    currentLanguage = result.selectedLanguage || 'en';
+    elements.languageSelect.value = currentLanguage;
+    document.documentElement.lang = currentLanguage;
+    console.log('언어 설정 로드 완료:', currentLanguage);
+  } catch (error) {
+    console.error('언어 설정 로드 실패:', error);
+    currentLanguage = 'en';
+    elements.languageSelect.value = currentLanguage;
+    document.documentElement.lang = currentLanguage;
+  }
+}
+
+// 언어 변경 처리
+async function handleLanguageChange(event) {
+  const newLanguage = event.target.value;
+  currentLanguage = newLanguage;
+
+  try {
+    // 언어 설정 저장
+    await chrome.storage.sync.set({ selectedLanguage: currentLanguage });
+    console.log('언어 설정 저장 완료:', currentLanguage);
+
+    // HTML lang 속성 업데이트
+    document.documentElement.lang = currentLanguage;
+
+    // i18n 텍스트 업데이트
+    await updateElementsWithI18n();
+
+    // 상태 메시지 업데이트 (언어 변경 후 적절한 언어로)
+    await showStatus('settingsSaved', 'success');
+
+    // 검색엔진 목록 다시 렌더링 (버튼 텍스트 업데이트를 위해)
+    await renderEnginesList();
+
+    // 모든 탭에 언어 변경 알림
+    await notifyAllTabsLanguageUpdate();
+
+  } catch (error) {
+    console.error('언어 설정 저장 실패:', error);
+    await showStatus('errorInvalidUrl', 'error');
+  }
+}
+
+// 모든 탭에 언어 업데이트 알림
+async function notifyAllTabsLanguageUpdate() {
+  try {
+    await chrome.runtime.sendMessage({
+      action: 'notifyAllTabs',
+      type: 'languageUpdate',
+      selectedLanguage: currentLanguage
+    });
+    console.log('모든 탭 언어 업데이트 알림 완료');
+  } catch (error) {
+    console.log('탭 언어 업데이트 알림 실패 (정상):', error.message);
+  }
+}
+
+// 상태 메시지 표시 (i18n 지원)
+async function showStatus(messageKey, type = 'info', duration = 3000) {
+  const message = await getTranslation(messageKey);
+  elements.statusMessage.textContent = message;
+  elements.statusMessage.className = `status-message ${type}`;
+
+  setTimeout(() => {
+    elements.statusMessage.className = 'status-message';
+  }, duration);
 } 

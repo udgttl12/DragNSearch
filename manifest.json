@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Drag & Drop Search",
   "version": "1.0.6",
-  "description": "텍스트를 드래그하여 다양한 검색엔진에서 즉시 검색할 수 있는 확장 기능",
+  "description": "Search text instantly by dragging and dropping to various search engines",
   "permissions": [
     "storage",
     "contextMenus",
@@ -17,7 +17,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
+      "js": ["translations.js", "content.js"],
       "css": ["content.css"],
       "run_at": "document_end"
     }

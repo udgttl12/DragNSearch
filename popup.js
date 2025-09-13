@@ -1,6 +1,18 @@
 // popup.js - 팝업 페이지의 JavaScript 로직
 
+// i18n 관련 함수들
+async function updateElementsWithI18n() {
+  const currentLang = await getCurrentLanguage();
+  const elementsWithI18n = document.querySelectorAll('[data-i18n]');
+  elementsWithI18n.forEach(element => {
+    const messageKey = element.getAttribute('data-i18n');
+    element.textContent = getMessage(messageKey, currentLang);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // i18n 텍스트 업데이트
+  updateElementsWithI18n();
   // 설정 버튼 이벤트
   const openOptionsBtn = document.getElementById('openOptions');
   if (openOptionsBtn) {

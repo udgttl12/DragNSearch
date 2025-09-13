@@ -102,7 +102,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'updatePopupDistance') {
     console.log('팝업 거리 업데이트 요청 받음:', request.popupDistance);
     popupDistance = request.popupDistance || 15;
-    // 팝업 재생성 (레이아웃이 변경된 경우)
+  } else if (request.action === 'updateLanguage') {
+    console.log('언어 업데이트 요청 받음:', request.selectedLanguage);
+    // 언어 변경 시 팝업이 있다면 다시 생성
     if (popupElement) {
       createPopup();
     }

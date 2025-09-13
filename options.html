@@ -11,63 +11,74 @@
 <body>
   <div class="container">
     <header class="header">
-      <h1>🔍 Drag & Drop Search</h1>
-      <p class="subtitle">검색엔진 관리 및 설정</p>
+      <div class="header-content">
+        <div class="header-main">
+          <h1 data-i18n="popupTitle">🔍 Drag & Drop Search</h1>
+          <p class="subtitle" data-i18n="optionsSubtitle">검색엔진 관리 및 설정</p>
+        </div>
+        <div class="language-selector">
+          <label for="language-select" data-i18n="selectLanguage">언어 선택</label>
+          <select id="language-select" class="language-dropdown">
+            <option value="en" data-i18n="languageEnglish">English</option>
+            <option value="ko" data-i18n="languageKorean">한국어</option>
+          </select>
+        </div>
+      </div>
     </header>
 
     <main class="main-content">
       <section class="section">
-        <h2>검색엔진 관리</h2>
+        <h2 data-i18n="searchEngineManagement">⚙️ 검색엔진 관리</h2>
         <div class="add-engine-form">
           <div class="form-group">
-            <label for="engine-name">검색엔진 이름</label>
-            <input type="text" id="engine-name" placeholder="예: Google, Naver">
+            <label for="engine-name" data-i18n="searchEngineName">검색엔진 이름</label>
+            <input type="text" id="engine-name" data-i18n-placeholder="searchEngineNamePlaceholder" placeholder="예: Google, Naver">
           </div>
           <div class="form-group">
-            <label for="engine-url">검색 URL</label>
-            <input type="url" id="engine-url" placeholder="https://www.google.com/search?q=%s">
-            <small>%s는 검색어로 대체됩니다</small>
+            <label for="engine-url" data-i18n="searchEngineUrl">검색 URL</label>
+            <input type="url" id="engine-url" data-i18n-placeholder="searchEngineUrlPlaceholder" placeholder="https://www.google.com/search?q=%s">
+            <small data-i18n="searchEngineUrlHint">%s는 검색어로 대체됩니다</small>
           </div>
           <div class="form-group">
             <div style="display: flex; align-items: center; gap: 6px;">
               <input type="checkbox" id="use-existing-icon" style="width: fit-content;">
-              <label for="use-existing-icon" style="margin-bottom: 0;">
+              <label for="use-existing-icon" style="margin-bottom: 0;" data-i18n="useExistingIcon">
                 기존 검색엔진 아이콘 등록하기
               </label>
             </div>
-            <small>체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
+            <small data-i18n="useExistingIconHint">체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
           </div>
           <div class="form-group" id="icon-url-group">
-            <label for="engine-icon">아이콘 URL (선택사항)</label>
-            <input type="url" id="engine-icon" placeholder="https://example.com/icon.png">
-            <small>기존 아이콘을 사용하지 않을 때만 입력하세요</small>
+            <label for="engine-icon" data-i18n="searchEngineIcon">아이콘 URL (선택사항)</label>
+            <input type="url" id="engine-icon" data-i18n-placeholder="searchEngineIconPlaceholder" placeholder="https://example.com/icon.png">
+            <small data-i18n="searchEngineIconHint">기존 아이콘을 사용하지 않을 때만 입력하세요</small>
           </div>
           <button type="button" id="add-engine-btn" class="btn btn-primary">
             <span class="btn-icon">➕</span>
-            검색엔진 추가
+            <span data-i18n="addSearchEngine">검색엔진 추가</span>
           </button>
         </div>
       </section>
 
       <section class="section">
-        <h2>검색엔진 표시 설정</h2>
+        <h2 data-i18n="displaySettings">🎨 검색엔진 표시 설정</h2>
         <div class="display-settings">
           <div class="setting-group">
-            <h3>드래그 시 검색엔진 배치</h3>
+            <h3 data-i18n="layoutOnDrag">드래그 시 검색엔진 배치</h3>
             <div class="radio-group">
               <label class="radio-option">
                 <input type="radio" name="layout" value="horizontal" id="layout-horizontal">
                 <span class="radio-label">
-                  <span class="radio-title">가로 배치</span>
-                  <span class="radio-description">검색엔진을 한 줄로 가로로 표시합니다</span>
+                  <span class="radio-title" data-i18n="layoutHorizontal">가로 배치</span>
+                  <span class="radio-description" data-i18n="layoutHorizontalDesc">검색엔진을 한 줄로 가로로 표시합니다</span>
                 </span>
               </label>
               <label class="radio-option">
                 <input type="radio" name="layout" value="grid" id="layout-grid">
                 <span class="radio-label">
-                  <span class="radio-title">그리드 배치</span>
-                  <span class="radio-description">검색엔진 개수에 따라 자동으로 격자 크기가 조정됩니다<br>
-                    <small style="opacity: 0.8; margin-top: 2px; display: block;">
+                  <span class="radio-title" data-i18n="layoutGrid">그리드 배치</span>
+                  <span class="radio-description" data-i18n="layoutGridDesc">검색엔진 개수에 따라 자동으로 격자 크기가 조정됩니다</span><br>
+                    <small style="opacity: 0.8; margin-top: 2px; display: block;" data-i18n="layoutGridSizes">
                       1-4개: 2x2 • 5-9개: 3x3 • 10-16개: 4x4 • 17-25개: 5x5 • 26개 이상: 6x6
                     </small>
                   </span>
@@ -77,11 +88,11 @@
           </div>
           
           <div class="setting-group">
-            <h3>팝업 표시 거리</h3>
+            <h3 data-i18n="popupDisplayDistance">팝업 표시 거리</h3>
             <div class="range-group">
               <label for="popup-distance" class="range-label">
-                <span class="range-title">드래그한 텍스트에서 팝업까지의 거리</span>
-                <span class="range-description">5픽셀(가까움) ~ 100픽셀(멀리) 사이에서 5픽셀 단위로 조정할 수 있습니다</span>
+                <span class="range-title" data-i18n="popupDistanceLabel">드래그한 텍스트에서 팝업까지의 거리</span>
+                <span class="range-description" data-i18n="popupDistanceDesc">5픽셀(가까움) ~ 100픽셀(멀리) 사이에서 5픽셀 단위로 조정할 수 있습니다</span>
               </label>
               <div class="range-input-group">
                 <input type="range" id="popup-distance" name="popup-distance" min="5" max="100" step="5" value="15" class="range-input">
@@ -93,42 +104,41 @@
       </section>
 
       <section class="section">
-        <h2>데이터 관리</h2>
+        <h2 data-i18n="dataManagement">💾 데이터 관리</h2>
         <div class="data-management">
           <div class="management-group">
-            <h3>백업 및 복원</h3>
+            <h3 data-i18n="backupRestore">백업 및 복원</h3>
             <div class="management-actions">
               <button type="button" id="export-btn" class="btn btn-secondary">
                 <span class="btn-icon">📥</span>
-                설정 내보내기 (JSON)
+                <span data-i18n="exportSettings">설정 내보내기 (JSON)</span>
               </button>
               <div class="import-section">
                 <input type="file" id="import-file" accept=".json" style="display: none;">
                 <button type="button" id="import-btn" class="btn btn-secondary">
                   <span class="btn-icon">📤</span>
-                  설정 가져오기 (JSON)
+                  <span data-i18n="importSettings">설정 가져오기 (JSON)</span>
                 </button>
               </div>
             </div>
-            <p class="management-description">
+            <p class="management-description" data-i18n="backupDescription">
               검색엔진 설정을 JSON 파일로 백업하거나 복원할 수 있습니다.
             </p>
           </div>
           
           <div class="management-group warning-section">
-            <h3>⚠️ 중요 알림</h3>
+            <h3 data-i18n="warningTitle">⚠️ 중요 알림</h3>
             <div class="warning-content">
-              <p><strong>확장프로그램을 삭제하기 전에 반드시 설정을 백업하세요!</strong></p>
-              <p>확장프로그램을 삭제하면 등록한 모든 검색엔진 정보가 영구적으로 삭제됩니다. 
-              삭제 전에 위의 "설정 내보내기" 버튼을 사용하여 JSON 파일로 백업을 저장하시기 바랍니다.</p>
-              <p>백업 후 확장프로그램을 재설치하면 "설정 가져오기"로 모든 검색엔진을 복원할 수 있습니다.</p>
+              <p><strong data-i18n="warningBackupTitle">확장프로그램을 삭제하기 전에 반드시 설정을 백업하세요!</strong></p>
+              <p data-i18n="warningBackupDesc">확장프로그램을 삭제하면 등록한 모든 검색엔진 정보가 영구적으로 삭제됩니다. 삭제 전에 위의 "설정 내보내기" 버튼을 사용하여 JSON 파일로 백업을 저장하시기 바랍니다.</p>
+              <p data-i18n="warningRestoreDesc">백업 후 확장프로그램을 재설치하면 "설정 가져오기"로 모든 검색엔진을 복원할 수 있습니다.</p>
             </div>
           </div>
         </div>
       </section>
 
       <section class="section">
-        <h2>등록된 검색엔진</h2>
+        <h2 data-i18n="registeredEngines">📋 등록된 검색엔진</h2>
         <div id="engines-list" class="engines-list">
           <!-- 동적으로 생성될 검색엔진 목록 -->
         </div>
@@ -140,11 +150,11 @@
       <div class="footer-actions">
         <button type="button" id="reset-btn" class="btn btn-secondary">
           <span class="btn-icon">🔄</span>
-          기본값으로 초기화
+          <span data-i18n="resetToDefault">기본값으로 초기화</span>
         </button>
         <button type="button" id="save-btn" class="btn btn-success">
           <span class="btn-icon">💾</span>
-          저장
+          <span data-i18n="saveSettings">저장</span>
         </button>
       </div>
     </footer>
@@ -153,11 +163,11 @@
   <!-- 확인 모달 -->
   <div id="confirm-modal" class="modal">
     <div class="modal-content">
-      <h3>확인</h3>
+      <h3 data-i18n="confirmTitle">확인</h3>
       <p id="confirm-message"></p>
       <div class="modal-actions">
-        <button type="button" id="confirm-cancel" class="btn btn-secondary">취소</button>
-        <button type="button" id="confirm-ok" class="btn btn-danger">확인</button>
+        <button type="button" id="confirm-cancel" class="btn btn-secondary" data-i18n="cancelButton">취소</button>
+        <button type="button" id="confirm-ok" class="btn btn-danger" data-i18n="confirmButton">확인</button>
       </div>
     </div>
   </div>
@@ -165,37 +175,38 @@
   <!-- 검색엔진 편집 모달 -->
   <div id="edit-modal" class="modal">
     <div class="modal-content">
-      <h3>검색엔진 편집</h3>
+      <h3 data-i18n="editEngineTitle">검색엔진 편집</h3>
       <div class="form-group">
-        <label for="edit-engine-name">검색엔진 이름</label>
+        <label for="edit-engine-name" data-i18n="searchEngineName">검색엔진 이름</label>
         <input type="text" id="edit-engine-name">
       </div>
       <div class="form-group">
-        <label for="edit-engine-url">검색 URL</label>
+        <label for="edit-engine-url" data-i18n="searchEngineUrl">검색 URL</label>
         <input type="url" id="edit-engine-url">
-        <small>%s는 검색어로 대체됩니다</small>
+        <small data-i18n="searchEngineUrlHint">%s는 검색어로 대체됩니다</small>
       </div>
       <div class="form-group">
         <div style="display: flex; align-items: center; gap: 6px;">
           <input type="checkbox" id="edit-use-existing-icon" style="width: fit-content;">
-          <label for="edit-use-existing-icon" style="margin-bottom: 0;">
+          <label for="edit-use-existing-icon" style="margin-bottom: 0;" data-i18n="useExistingIcon">
             기존 검색엔진 아이콘 등록하기
           </label>
         </div>
-        <small>체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
+        <small data-i18n="useExistingIconHint">체크하면 사이트에서 자동으로 아이콘을 가져옵니다</small>
       </div>
       <div class="form-group" id="edit-icon-url-group">
-        <label for="edit-engine-icon">아이콘 URL</label>
+        <label for="edit-engine-icon" data-i18n="searchEngineIcon">아이콘 URL</label>
         <input type="url" id="edit-engine-icon">
-        <small>기존 아이콘을 사용하지 않을 때만 입력하세요</small>
+        <small data-i18n="searchEngineIconHint">기존 아이콘을 사용하지 않을 때만 입력하세요</small>
       </div>
       <div class="modal-actions">
-        <button type="button" id="edit-cancel" class="btn btn-secondary">취소</button>
-        <button type="button" id="edit-save" class="btn btn-primary">저장</button>
+        <button type="button" id="edit-cancel" class="btn btn-secondary" data-i18n="cancelButton">취소</button>
+        <button type="button" id="edit-save" class="btn btn-primary" data-i18n="saveSettings">저장</button>
       </div>
     </div>
   </div>
 
+  <script src="translations.js"></script>
   <script src="options.js"></script>
 </body>
 </html> 

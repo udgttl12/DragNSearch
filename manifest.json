@@ -1,7 +1,7 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 4,
   "name": "Drag & Drop Search",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Search text instantly by dragging and dropping to various search engines",
   "permissions": [
     "storage",

@@ -28,9 +28,6 @@ const elements = {
   importBtn: document.getElementById('import-btn'),
   importFile: document.getElementById('import-file'),
   
-  // 언어 설정 요소들
-  languageSelect: document.getElementById('language-select'),
-  
   // 모달 요소들
   confirmModal: document.getElementById('confirm-modal'),
   confirmMessage: document.getElementById('confirm-message'),
@@ -80,13 +77,7 @@ const DEFAULT_SEARCH_ENGINES = [
 ];
 
 // 초기화
-document.addEventListener('DOMContentLoaded', async () => {
-  // i18n 초기화
-  if (window.i18n) {
-    await initLanguage();
-    window.i18n.applyI18nToElement();
-  }
-  
+document.addEventListener('DOMContentLoaded', () => {
   loadSearchEngines();
   loadSettings();
   initEventListeners();
@@ -107,11 +98,6 @@ function initEventListeners() {
   elements.exportBtn.addEventListener('click', handleExport);
   elements.importBtn.addEventListener('click', () => elements.importFile.click());
   elements.importFile.addEventListener('change', handleImport);
-  
-  // 언어 설정 이벤트
-  if (elements.languageSelect) {
-    elements.languageSelect.addEventListener('change', handleLanguageChange);
-  }
   
   // 모달 이벤트
   elements.confirmCancel.addEventListener('click', hideConfirmModal);
@@ -789,34 +775,5 @@ async function notifyAllTabsPopupDistanceUpdate() {
     console.log('모든 탭 팝업 거리 업데이트 알림 완료');
   } catch (error) {
     console.log('탭 팝업 거리 업데이트 알림 실패 (정상):', error.message);
-  }
-}
-
-// 언어 초기화
-async function initLanguage() {
-  try {
-    const userLang = await window.i18n.getUserLanguage();
-    if (elements.languageSelect) {
-      elements.languageSelect.value = userLang;
-    }
-  } catch (error) {
-    console.error('언어 초기화 실패:', error);
-  }
-}
-
-// 언어 변경 핸들러
-async function handleLanguageChange(event) {
-  const newLanguage = event.target.value;
-  try {
-    await window.i18n.setUserLanguage(newLanguage);
-    
-    // 페이지 새로고침으로 언어 적용
-    showMessage('언어가 변경되었습니다. 페이지를 새로고침합니다...', 'success');
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-  } catch (error) {
-    console.error('언어 변경 실패:', error);
-    showMessage('언어 변경에 실패했습니다.', 'error');
   }
 } 

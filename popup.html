@@ -10,8 +10,8 @@
       padding: 20px;
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
-      color: #3f3f46;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
     }
     
     .header {
@@ -32,12 +32,11 @@
     }
     
     .content {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       padding: 15px;
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(228, 228, 231, 0.5);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .feature {
@@ -82,65 +81,61 @@
     }
     
     .btn-primary {
-      background: #2563eb;
-      color: white;
-      border: none;
+      background: rgba(255, 255, 255, 0.9);
+      color: #4f46e5;
     }
     
     .btn-primary:hover {
-      background: #1d4ed8;
+      background: white;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     }
     
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.8);
-      color: #3f3f46;
-      border: 1px solid rgba(228, 228, 231, 0.6);
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.3);
       transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1 data-i18n="popupTitle">🔍 Drag & Drop Search</h1>
-    <p data-i18n="popupSubtitle">텍스트를 드래그하여 빠른 검색</p>
+    <h1>🔍 Drag & Drop Search</h1>
+    <p>텍스트를 드래그하여 빠른 검색</p>
   </div>
   
   <div class="content">
     <div class="feature">
       <span class="feature-icon">✨</span>
-      <span data-i18n="popupFeature1">텍스트를 드래그하면 검색 아이콘이 나타납니다</span>
+      <span>텍스트를 드래그하면 검색 아이콘이 나타납니다</span>
     </div>
     <div class="feature">
       <span class="feature-icon">🖱️</span>
-      <span data-i18n="popupFeature2">아이콘을 클릭하거나 드래그하여 검색</span>
+      <span>아이콘을 클릭하거나 드래그하여 검색</span>
     </div>
     <div class="feature">
       <span class="feature-icon">🔧</span>
-      <span data-i18n="popupFeature3">사용자 정의 검색엔진 추가 가능</span>
+      <span>사용자 정의 검색엔진 추가 가능</span>
     </div>
     <div class="feature">
       <span class="feature-icon">🖍️</span>
-      <span data-i18n="popupFeature4">우클릭 메뉴에서도 사용 가능</span>
+      <span>우클릭 메뉴에서도 사용 가능</span>
     </div>
   </div>
   
   <div class="actions">
-    <button class="btn btn-primary" id="openOptions" data-i18n="popupSettings">
+    <button class="btn btn-primary" id="openOptions">
       ⚙️ 설정
     </button>
-    <button class="btn btn-secondary" id="testFeature" data-i18n="popupTest">
+    <button class="btn btn-secondary" id="testFeature">
       🧪 기능 테스트
     </button>
   </div>
   
-  <script src="js/i18n.js"></script>
   <script src="popup.js"></script>
 </body>
 </html> 
